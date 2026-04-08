@@ -1,1 +1,1006 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Market Survivor — Investing Game</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111b2e; --card2:#0f1728; --line:rgba(255,255,255,.12);
+      --txt:#eaf1ff; --mut:#a8b6d8; --good:#44d38a; --bad:#ff5c7a; --warn:#ffd166; --acc:#6aa6ff;
+      --r:14px; --shadow:0 14px 40px rgba(0,0,0,.45);
+      --font:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font); color:var(--txt);
+      background:radial-gradient(1000px 600px at 10% 0%, rgba(106,166,255,.18), transparent 60%),
+                 radial-gradient(900px 550px at 100% 10%, rgba(68,211,138,.12), transparent 55%),
+                 var(--bg);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    header{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+      padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);
+      background:rgba(17,27,46,.75);backdrop-filter:blur(10px);box-shadow:var(--shadow);
+    }
+    h1{margin:0;font-size:16px;letter-spacing:.2px}
+    .sub{margin:4px 0 0 0;color:var(--mut);font-size:12px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap}
+    button{
+      border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--txt);
+      padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;
+    }
+    button:hover{background:rgba(255,255,255,.10)}
+    button.primary{border-color:rgba(106,166,255,.35);background:rgba(106,166,255,.18)}
+    button.danger{border-color:rgba(255,92,122,.35);background:rgba(255,92,122,.14)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .stats{
+      display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;margin-top:12px
+    }
+    @media (max-width:960px){.stats{grid-template-columns:repeat(2,1fr)}}
+    .stat{
+      padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+      background:rgba(15,23,40,.55)
+    }
+    .label{color:var(--mut);font-size:12px;margin-bottom:6px}
+    .value{font-weight:900;font-size:16px}
+    .small{color:var(--mut);font-size:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    @media (max-width:960px){.grid{grid-template-columns:1fr}}
+    .card{
+      padding:14px;border-radius:var(--r);border:1px solid var(--line);
+      background:rgba(17,27,46,.60);backdrop-filter:blur(10px);box-shadow:var(--shadow);
+    }
+    h2{margin:0 0 8px 0;font-size:14px}
+    h3{margin:12px 0 8px 0;font-size:13px;color:var(--txt)}
+    p{margin:6px 0}
+    ul{margin:8px 0 0 0}
+    table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+    th,td{padding:10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+    th{background:rgba(255,255,255,.03);color:var(--mut);text-align:left}
+    tr:last-child td{border-bottom:none}
+    .assetname{display:flex;align-items:center;gap:8px;font-weight:900}
+    .risk{
+      display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--mut);font-size:12px
+    }
+    .dot{width:8px;height:8px;border-radius:99px;display:inline-block}
+    .low .dot{background:var(--good)} .med .dot{background:var(--warn)} .high .dot{background:var(--bad)}
+    .info{
+      padding:4px 8px;border-radius:10px;font-size:12px;font-weight:900
+    }
+    input[type=number], select{
+      width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(10,15,26,.55);color:var(--txt);outline:none
+    }
+    input[type=number]:focus, select:focus{
+      border-color:rgba(106,166,255,.55); box-shadow:0 0 0 3px rgba(106,166,255,.18)
+    }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:10px}
+    .pill{
+      display:inline-block;padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04);color:var(--mut);font-size:12px
+    }
+    .error{color:var(--bad);font-size:12px;margin-top:8px}
+    .good{color:var(--good)} .bad{color:var(--bad)}
+    .overlay[hidden]{display:none}
+    .overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+      display:grid;place-items:center;padding:16px;z-index:50
+    }
+    .modal{
+      width:min(860px, 100%);max-height:min(86vh, 760px);overflow:auto;
+      border-radius:16px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(17,27,46,.95);box-shadow:var(--shadow)
+    }
+    .modalhead{
+      position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;gap:10px;
+      padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.10);background:rgba(17,27,46,.98)
+    }
+    .modalbody{padding:14px}
+    .note{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.10);color:var(--mut);font-size:12px}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    @media (max-width:720px){.kpis{grid-template-columns:1fr}}
+    .kpi{border:1px solid rgba(255,255,255,.12);background:rgba(10,15,26,.35);border-radius:12px;padding:10px 12px}
+    .kpi .label{margin:0;color:var(--mut);font-size:12px}
+    .kpi .value{margin-top:4px;font-weight:900}
+    ol{margin:8px 0 0 18px;color:var(--mut);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Market Survivor</h1>
+        <div class="sub">A solo investing game: split € across assets, react to news, survive volatility.</div>
+      </div>
+      <div class="btns">
+        <button id="btnHow">How to play</button>
+        <button id="btnSettings" class="primary">⚙️ Settings</button>
+        <button id="btnRestart" class="danger">↻ Restart</button>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="stat"><div class="label">Month</div><div class="value" id="statMonth">—</div></div>
+      <div class="stat"><div class="label">Net worth</div><div class="value" id="statWorth">—</div></div>
+      <div class="stat">
+        <div class="label">Goal</div><div class="value" id="statGoal">—</div>
+        <div class="small" id="statProgress">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Cash (uninvested)</div><div class="value" id="statCash">—</div>
+        <div class="small" id="statCashNote">—</div>
+      </div>
+    </section>
+
+    <main class="grid">
+      <section class="card">
+        <h2>📢 News briefing</h2>
+        <div class="value" id="evTitle">—</div>
+        <p class="small" id="evDesc">—</p>
+
+        <h3>What might happen next</h3>
+        <ul id="evNext"></ul>
+
+        <div class="note">
+          You see the headline before investing (skill). The follow-up is chosen from related outcomes (uncertainty).
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>💶 Allocate your money for this month</h2>
+        <p class="small">Enter target allocations (€). You can split across multiple options. Unallocated stays as cash.</p>
+
+        <div style="overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Risk</th>
+                <th>Current</th>
+                <th>Target (€)</th>
+              </tr>
+            </thead>
+            <tbody id="assetBody"></tbody>
+          </table>
+        </div>
+
+        <div class="row">
+          <span class="pill">Available: <strong id="sumAvail">—</strong></span>
+          <span class="pill">Estimated fees: <strong id="sumFees">—</strong></span>
+          <span class="pill">Cash after fees: <strong id="sumCash">—</strong></span>
+          <button class="primary" id="btnEnd">End month ▶</button>
+        </div>
+
+        <div class="error" id="allocErr" hidden></div>
+
+        <div class="note">
+          Educational simulation only. Returns are randomized distributions affected by the story, not real market predictions.
+        </div>
+      </section>
+    </main>
+
+    <section class="card">
+      <h2>🧾 History</h2>
+      <ol id="history"></ol>
+      <div class="note">Tip: The history helps you notice patterns (and also how unpredictable outcomes can be).</div>
+    </section>
+  </div>
+
+  <!-- HOW -->
+  <div class="overlay" id="modalHow" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="howTitle">
+      <div class="modalhead">
+        <div class="value" id="howTitle">How to play</div>
+        <button id="howClose">✕</button>
+      </div>
+      <div class="modalbody">
+        <p class="small">
+          Default run: start <strong>€1,000</strong>, goal <strong>€2,000</strong>, time limit <strong>12 months</strong>.
+        </p>
+        <ul class="small">
+          <li>Read the news briefing first.</li>
+          <li>Set target allocations (€) across assets (you can split money).</li>
+          <li>Press <strong>End month</strong> to resolve returns.</li>
+          <li>The story continues via related follow-up events.</li>
+        </ul>
+        <p class="small">Click the <strong>i</strong> button next to each asset to learn what it is and why it’s risky.</p>
+        <div class="note">Not financial advice. This is a learning game.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="overlay" id="modalSettings" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+      <div class="modalhead">
+        <div class="value" id="setTitle">Settings</div>
+        <button id="setClose">✕</button>
+      </div>
+      <div class="modalbody">
+        <div class="kpis">
+          <div>
+            <div class="small">Starting money (€)</div>
+            <input id="setStart" type="number" min="1" step="50" />
+          </div>
+          <div>
+            <div class="small">Goal (€)</div>
+            <input id="setGoal" type="number" min="1" step="50" />
+          </div>
+          <div>
+            <div class="small">Months</div>
+            <input id="setMonths" type="number" min="1" max="120" step="1" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <label class="small"><input id="setFees" type="checkbox" /> Enable transaction fees (teaches over-trading)</label>
+          <label class="small"><input id="setInfl" type="checkbox" /> Enable inflation drag on cash (teaches purchasing-power loss)</label>
+          <div style="min-width:220px">
+            <div class="small">Difficulty</div>
+            <select id="setDiff">
+              <option value="easy">Easy (lower volatility)</option>
+              <option value="normal">Normal</option>
+              <option value="hard">Hard (higher volatility)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="justify-content:flex-end">
+          <button class="primary" id="setApply">Apply & restart</button>
+        </div>
+
+        <div class="note">Changing settings restarts the run.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSET INFO -->
+  <div class="overlay" id="modalAsset" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="assetTitle">
+      <div class="modalhead">
+        <div class="value" id="assetTitle">Asset</div>
+        <button id="assetClose">✕</button>
+      </div>
+      <div class="modalbody" id="assetBodyText"></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="overlay" id="modalResult" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resTitle">
+      <div class="modalhead">
+        <div class="value" id="resTitle">Month result</div>
+        <button id="resClose">✕</button>
+      </div>
+      <div class="modalbody" id="resBody"></div>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const SETTINGS_KEY = 'market_survivor_settings_v1';
+
+    const DEFAULTS = Object.freeze({
+      start: 1000,
+      goal: 2000,
+      months: 12,
+      feesEnabled: false,
+      feeRate: 0.002,          // 0.2% of turnover
+      inflEnabled: true,       // inflation drag on cash (simplified model)
+      baseCashInterest: 0.001, // +0.1% monthly
+      baseInflation: 0.002,    // -0.2% monthly
+      difficulty: 'normal'     // easy | normal | hard
+    });
+
+    const fmt0 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+    const fmt2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
+    const fmtPct = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 1 });
+
+    const ASSETS = [
+      {
+        id: 'stocks', name: 'Stocks', icon: '📈', riskClass: 'med',
+        baseMu: 0.006, baseSigma: 0.050, clamp: [-0.35, 0.35],
+        info: {
+          what: 'Stocks are shares in companies. Returns can come from price changes and dividends.',
+          risk: 'Prices can fall if the company or economy performs poorly. No guarantees.',
+          model: 'Medium volatility; reacts to growth/recession and rate news.'
+        }
+      },
+      {
+        id: 'bonds', name: 'Bonds', icon: '🏦', riskClass: 'low',
+        baseMu: 0.002, baseSigma: 0.015, clamp: [-0.12, 0.15],
+        info: {
+          what: 'Bonds are loans to governments/companies. Returns come from interest and price changes.',
+          risk: 'When interest rates rise, existing fixed-rate bond prices often fall (rate risk).',
+          model: 'Lower volatility; can dip during rate hikes; steadier in risk-off periods.'
+        }
+      },
+      {
+        id: 'realEstate', name: 'Real Estate', icon: '🏠', riskClass: 'med',
+        baseMu: 0.004, baseSigma: 0.025, clamp: [-0.20, 0.24],
+        info: {
+          what: 'Represents property values/rents (simplified). Often sensitive to financing costs.',
+          risk: 'Can fall when borrowing costs rise or the economy weakens.',
+          model: 'Moderate volatility; pressured by rising rates.'
+        }
+      },
+      {
+        id: 'crypto', name: 'Crypto', icon: '🪙', riskClass: 'high',
+        baseMu: 0.010, baseSigma: 0.120, clamp: [-0.70, 0.90],
+        info: {
+          what: 'A volatile digital-asset bucket (simplified).',
+          risk: 'Large swings are common; additional risks include hacks, fraud, regulation changes.',
+          model: 'Highest volatility; can boom/crash in risk-on/risk-off swings.'
+        }
+      }
+    ];
+
+    const EVENTS = {
+      calm: {
+        title: 'Markets are calm',
+        desc: 'No major shocks. Investors focus on steady growth.',
+        cash: { rateAdd: 0.000, inflAdd: 0.000 },
+        impacts: {
+          stocks:{muAdd:0.000,sigMul:0.95}, bonds:{muAdd:0.000,sigMul:0.95},
+          realEstate:{muAdd:0.000,sigMul:0.95}, crypto:{muAdd:0.000,sigMul:0.95}
+        },
+        followUps: [
+          { id:'rates_hint', w:3, teaser:'Central bank hints about future rates' },
+          { id:'earnings',   w:3, teaser:'Earnings surprises hit the tape' },
+          { id:'tech_hype',  w:2, teaser:'A new tech narrative attracts speculators' },
+          { id:'energy',     w:1, teaser:'Energy costs jump on global tensions' }
+        ],
+        lesson: 'Calm markets can tempt you to take too much risk. Risk often arrives later.'
+      },
+
+      earnings: {
+        title: 'Earnings season surprises',
+        desc: 'Some companies beat expectations, others disappoint.',
+        cash: { rateAdd: 0.000, inflAdd: 0.000 },
+        impacts: {
+          stocks:{muAdd:0.004,sigMul:1.20}, bonds:{muAdd:0.000,sigMul:1.05},
+          realEstate:{muAdd:0.001,sigMul:1.05}, crypto:{muAdd:0.002,sigMul:1.10}
+        },
+        followUps: [
+          { id:'risk_on',  w:3, teaser:'Optimism spreads (risk-on)' },
+          { id:'risk_off', w:2, teaser:'Nerves increase (risk-off)' },
+          { id:'calm',     w:1, teaser:'Markets digest the news' }
+        ],
+        lesson: 'Even “good news” can lead to losses if the market expected more.'
+      },
+
+      rates_hint: {
+        title: 'Central bank speech moves expectations',
+        desc: 'Markets re-price based on what rates might do next.',
+        cash: { rateAdd: 0.001, inflAdd: 0.000 },
+        impacts: {
+          stocks:{muAdd:-0.002,sigMul:1.15}, bonds:{muAdd:-0.004,sigMul:1.35},
+          realEstate:{muAdd:-0.003,sigMul:1.20}, crypto:{muAdd:-0.002,sigMul:1.25}
+        },
+        followUps: [
+          { id:'hike',      w:3, teaser:'Rates rise more than expected' },
+          { id:'pause',     w:3, teaser:'Rates pause (uncertainty remains)' },
+          { id:'infl_spike',w:2, teaser:'Inflation data surprises higher' }
+        ],
+        lesson: 'Rate expectations can move many assets at the same time.'
+      },
+
+      hike: {
+        title: 'Rate hike shock',
+        desc: 'Borrowing becomes more expensive than markets expected.',
+        cash: { rateAdd: 0.002, inflAdd: -0.001 },
+        impacts: {
+          stocks:{muAdd:-0.006,sigMul:1.25}, bonds:{muAdd:-0.010,sigMul:1.35},
+          realEstate:{muAdd:-0.010,sigMul:1.25}, crypto:{muAdd:-0.008,sigMul:1.35}
+        },
+        followUps: [
+          { id:'recession_warn', w:3, teaser:'Recession risk warnings increase' },
+          { id:'soft',          w:2, teaser:'Soft-landing hopes grow' },
+          { id:'risk_off',      w:1, teaser:'Risk-off mood spreads' }
+        ],
+        lesson: 'Lower-risk assets can still lose value when interest rates change.'
+      },
+
+      pause: {
+        title: 'Rates pause (wait-and-see)',
+        desc: 'No big move, but uncertainty stays elevated.',
+        cash: { rateAdd: 0.001, inflAdd: 0.000 },
+        impacts: {
+          stocks:{muAdd:0.001,sigMul:1.10}, bonds:{muAdd:0.003,sigMul:1.10},
+          realEstate:{muAdd:0.001,sigMul:1.05}, crypto:{muAdd:0.002,sigMul:1.20}
+        },
+        followUps: [
+          { id:'infl_cool', w:3, teaser:'Inflation cools unexpectedly' },
+          { id:'infl_spike',w:2, teaser:'Inflation flares up again' },
+          { id:'calm',      w:1, teaser:'Volatility fades' }
+        ],
+        lesson: 'Sometimes the main risk is uncertainty itself.'
+      },
+
+      infl_spike: {
+        title: 'Inflation spike',
+        desc: 'Prices rise faster; purchasing power weakens.',
+        cash: { rateAdd: 0.000, inflAdd: 0.010 },
+        impacts: {
+          stocks:{muAdd:-0.004,sigMul:1.20}, bonds:{muAdd:-0.012,sigMul:1.30},
+          realEstate:{muAdd:-0.008,sigMul:1.20}, crypto:{muAdd:-0.003,sigMul:1.35}
+        },
+        followUps: [
+          { id:'rates_hint', w:3, teaser:'Officials signal action' },
+          { id:'hike',       w:2, teaser:'Rates rise to fight inflation' },
+          { id:'soft',       w:1, teaser:'Inflation eases without a crash' }
+        ],
+        lesson: 'Inflation can quietly damage savers if returns don’t keep up.'
+      },
+
+      infl_cool: {
+        title: 'Inflation cools',
+        desc: 'Price pressure eases more than expected.',
+        cash: { rateAdd: 0.000, inflAdd: -0.001 },
+        impacts: {
+          stocks:{muAdd:0.003,sigMul:1.05}, bonds:{muAdd:0.006,sigMul:1.10},
+          realEstate:{muAdd:0.003,sigMul:1.05}, crypto:{muAdd:0.004,sigMul:1.15}
+        },
+        followUps: [
+          { id:'soft',     w:3, teaser:'Soft landing looks likely' },
+          { id:'earnings', w:2, teaser:'Earnings become the focus again' },
+          { id:'calm',     w:1, teaser:'Markets calm down' }
+        ],
+        lesson: 'Markets often move on changing expectations, not just today’s data.'
+      },
+
+      recession_warn: {
+        title: 'Recession warning lights up',
+        desc: 'Confidence drops; fear of slowdown rises.',
+        cash: { rateAdd: 0.001, inflAdd: -0.002 },
+        impacts: {
+          stocks:{muAdd:-0.015,sigMul:1.40}, bonds:{muAdd:0.006,sigMul:1.20},
+          realEstate:{muAdd:-0.010,sigMul:1.30}, crypto:{muAdd:-0.020,sigMul:1.60}
+        },
+        followUps: [
+          { id:'recession', w:3, teaser:'Recession hits (risk-off dominates)' },
+          { id:'support',   w:2, teaser:'Policy support is announced' },
+          { id:'soft',      w:1, teaser:'Slowdown is contained' }
+        ],
+        lesson: 'In panics, risky assets can fall together. Diversification helps but isn’t magic.'
+      },
+
+      recession: {
+        title: 'Recession: risk-off dominates',
+        desc: 'Investors seek safety; risk appetite collapses.',
+        cash: { rateAdd: 0.001, inflAdd: -0.003 },
+        impacts: {
+          stocks:{muAdd:-0.020,sigMul:1.50}, bonds:{muAdd:0.010,sigMul:1.25},
+          realEstate:{muAdd:-0.015,sigMul:1.35}, crypto:{muAdd:-0.030,sigMul:1.70}
+        },
+        followUps: [
+          { id:'support', w:3, teaser:'Stimulus / rate cuts arrive' },
+          { id:'calm',    w:1, teaser:'Markets adapt to the new normal' },
+          { id:'risk_on', w:1, teaser:'Bargain hunters return' }
+        ],
+        lesson: 'Drawdowns hurt. This is why time horizon and risk tolerance matter.'
+      },
+
+      support: {
+        title: 'Policy support arrives',
+        desc: 'Authorities try to stabilize the economy and markets.',
+        cash: { rateAdd: -0.001, inflAdd: 0.002 },
+        impacts: {
+          stocks:{muAdd:0.010,sigMul:1.35}, bonds:{muAdd:0.010,sigMul:1.15},
+          realEstate:{muAdd:0.006,sigMul:1.20}, crypto:{muAdd:0.012,sigMul:1.45}
+        },
+        followUps: [
+          { id:'risk_on',   w:3, teaser:'Risk appetite returns' },
+          { id:'infl_spike',w:1, teaser:'Inflation fears come back' },
+          { id:'calm',      w:1, teaser:'Slow stabilization' }
+        ],
+        lesson: 'Policy can change the environment fast, but it cannot remove risk.'
+      },
+
+      risk_on: {
+        title: 'Risk-on: return-chasing mood',
+        desc: 'Investors pile into volatile assets.',
+        cash: { rateAdd: 0.000, inflAdd: 0.000 },
+        impacts: {
+          stocks:{muAdd:0.010,sigMul:1.25}, bonds:{muAdd:-0.003,sigMul:1.10},
+          realEstate:{muAdd:0.004,sigMul:1.20}, crypto:{muAdd:0.020,sigMul:1.60}
+        },
+        followUps: [
+          { id:'risk_off', w:2, teaser:'Mood flips (risk-off)' },
+          { id:'tech_hype',w:2, teaser:'Speculation concentrates in “the next big thing”' },
+          { id:'earnings',w:1, teaser:'Reality check from earnings' }
+        ],
+        lesson: 'Momentum feels like skill until it stops. Don’t confuse luck with certainty.'
+      },
+
+      risk_off: {
+        title: 'Risk-off: fear increases',
+        desc: 'Investors sell risky assets and prefer stability.',
+        cash: { rateAdd: 0.000, inflAdd: 0.000 },
+        impacts: {
+          stocks:{muAdd:-0.010,sigMul:1.35}, bonds:{muAdd:0.004,sigMul:1.15},
+          realEstate:{muAdd:-0.006,sigMul:1.25}, crypto:{muAdd:-0.020,sigMul:1.70}
+        },
+        followUps: [
+          { id:'calm',    w:2, teaser:'Fear fades and markets stabilize' },
+          { id:'support', w:1, teaser:'Authorities respond' },
+          { id:'recession_warn', w:1, teaser:'Slowdown fears intensify' }
+        ],
+        lesson: 'The urge to “do something” often peaks at the worst emotional time.'
+      },
+
+      tech_hype: {
+        title: 'Tech hype wave',
+        desc: 'A shiny new narrative attracts speculators across markets.',
+        cash: { rateAdd: 0.000, inflAdd: 0.000 },
+        impacts: {
+          stocks:{muAdd:0.010,sigMul:1.30}, bonds:{muAdd:-0.002,sigMul:1.05},
+          realEstate:{muAdd:0.000,sigMul:1.05}, crypto:{muAdd:0.018,sigMul:1.55}
+        },
+        followUps: [
+          { id:'bubble',  w:2, teaser:'Bubble warnings: valuations look stretched' },
+          { id:'risk_on', w:2, teaser:'Speculation accelerates' },
+          { id:'risk_off',w:1, teaser:'A sudden correction hits' }
+        ],
+        lesson: 'If something “only goes up,” it often means risk is being ignored.'
+      },
+
+      bubble: {
+        title: 'Bubble warning',
+        desc: 'Prices look far above fundamentals; volatility rises.',
+        cash: { rateAdd: 0.000, inflAdd: 0.000 },
+        impacts: {
+          stocks:{muAdd:-0.004,sigMul:1.45}, bonds:{muAdd:0.001,sigMul:1.10},
+          realEstate:{muAdd:-0.002,sigMul:1.20}, crypto:{muAdd:-0.010,sigMul:1.70}
+        },
+        followUps: [
+          { id:'risk_off', w:3, teaser:'Correction / crash' },
+          { id:'risk_on',  w:1, teaser:'The bubble grows anyway' },
+          { id:'calm',     w:1, teaser:'Prices consolidate' }
+        ],
+        lesson: 'Higher expected returns usually come with higher crash risk.'
+      },
+
+      energy: {
+        title: 'Energy shock',
+        desc: 'Fuel and transport costs jump; inflation fears rise.',
+        cash: { rateAdd: 0.000, inflAdd: 0.006 },
+        impacts: {
+          stocks:{muAdd:-0.008,sigMul:1.25}, bonds:{muAdd:-0.006,sigMul:1.25},
+          realEstate:{muAdd:-0.006,sigMul:1.20}, crypto:{muAdd:-0.010,sigMul:1.45}
+        },
+        followUps: [
+          { id:'infl_spike', w:3, teaser:'Inflation fears surge' },
+          { id:'risk_off',   w:1, teaser:'Risk-off mood spreads' },
+          { id:'calm',       w:1, teaser:'The shock fades' }
+        ],
+        lesson: 'Macro shocks can hit many markets at once (systemic risk).'
+      }
+    };
+
+    const START_EVENTS = ['calm','rates_hint','tech_hype','energy','earnings'];
+
+    function clamp(x,a,b){ return Math.min(b, Math.max(a, x)); }
+    function num(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
+
+    function randN(){ // Box–Muller
+      let u=0,v=0;
+      while(u===0) u=Math.random();
+      while(v===0) v=Math.random();
+      return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+    }
+
+    function chooseWeighted(arr){
+      const total = arr.reduce((s,x)=>s+x.w,0);
+      let r = Math.random()*total;
+      for(const x of arr){ r -= x.w; if(r<=0) return x.id; }
+      return arr[arr.length-1].id;
+    }
+
+    function diffMult(s){
+      if(s.difficulty==='easy') return 0.85;
+      if(s.difficulty==='hard') return 1.18;
+      return 1.0;
+    }
+
+    function loadSettings(){
+      try{
+        const raw = localStorage.getItem(SETTINGS_KEY);
+        if(!raw) return { ...DEFAULTS };
+        return { ...DEFAULTS, ...JSON.parse(raw) };
+      }catch{ return { ...DEFAULTS }; }
+    }
+    function saveSettings(s){
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    }
+
+    let settings = loadSettings();
+    let state = null;
+
+    function newRun(){
+      const startEvent = START_EVENTS[Math.floor(Math.random()*START_EVENTS.length)];
+      state = {
+        month: 1,
+        eventId: startEvent,
+        cash: settings.start,
+        h: { stocks:0, bonds:0, realEstate:0, crypto:0 },
+        history: []
+      };
+      render();
+    }
+
+    function worth(){
+      return state.cash + Object.values(state.h).reduce((s,v)=>s+v,0);
+    }
+
+    const el = (id)=>document.getElementById(id);
+
+    function openModal(id){ el(id).hidden = false; }
+    function closeModal(id){ el(id).hidden = true; }
+
+    function riskLabel(a){
+      if(a.riskClass==='low') return 'LOW';
+      if(a.riskClass==='high') return 'HIGH';
+      return 'MED';
+    }
+
+    function buildAssetRows(){
+      const tb = el('assetBody');
+      tb.innerHTML = '';
+      ASSETS.forEach(a => {
+        const tr = document.createElement('tr');
+
+        const td1 = document.createElement('td');
+        const name = document.createElement('div');
+        name.className = 'assetname';
+        name.textContent = `${a.icon} ${a.name} `;
+        const ib = document.createElement('button');
+        ib.className = 'info';
+        ib.type = 'button';
+        ib.textContent = 'i';
+        ib.addEventListener('click', ()=>showAssetInfo(a));
+        name.appendChild(ib);
+        td1.appendChild(name);
+
+        const td2 = document.createElement('td');
+        const r = document.createElement('span');
+        r.className = `risk ${a.riskClass}`;
+        r.innerHTML = `<span class="dot"></span>${riskLabel(a)}`;
+        td2.appendChild(r);
+
+        const td3 = document.createElement('td');
+        td3.id = `cur-${a.id}`;
+
+        const td4 = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.min = '0';
+        inp.step = '10';
+        inp.id = `tar-${a.id}`;
+        inp.addEventListener('input', updateSummary);
+        td4.appendChild(inp);
+
+        tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+        tb.appendChild(tr);
+      });
+    }
+
+    function renderNews(){
+      const ev = EVENTS[state.eventId];
+      el('evTitle').textContent = ev.title;
+      el('evDesc').textContent = ev.desc;
+
+      const ul = el('evNext');
+      ul.innerHTML = '';
+      ev.followUps.forEach(f => {
+        const li = document.createElement('li');
+        li.textContent = f.teaser;
+        ul.appendChild(li);
+      });
+    }
+
+    function renderStats(){
+      const w = worth();
+      el('statMonth').textContent = `${state.month} / ${settings.months}`;
+      el('statWorth').textContent = fmt0.format(w);
+      el('statGoal').textContent = fmt0.format(settings.goal);
+      el('statCash').textContent = fmt0.format(state.cash);
+
+      const prog = clamp(w / settings.goal, 0, 1);
+      el('statProgress').textContent = `Progress: ${(prog*100).toFixed(1)}%`;
+
+      const ev = EVENTS[state.eventId];
+      const cashRate = settings.baseCashInterest + (ev.cash?.rateAdd ?? 0);
+      const infl = settings.inflEnabled ? (settings.baseInflation + (ev.cash?.inflAdd ?? 0)) : 0;
+      const net = cashRate - infl;
+      el('statCashNote').textContent =
+        `Cash ≈ ${fmtPct.format(net)} / month (${fmtPct.format(cashRate)} interest, ${settings.inflEnabled ? fmtPct.format(infl)+' inflation drag' : 'inflation off'})`;
+    }
+
+    function renderTargets(){
+      ASSETS.forEach(a => {
+        el(`cur-${a.id}`).textContent = fmt0.format(state.h[a.id]);
+        el(`tar-${a.id}`).value = String(Math.round(state.h[a.id]));
+      });
+    }
+
+    function readTargets(){
+      const t = {};
+      ASSETS.forEach(a => {
+        t[a.id] = clamp(num(el(`tar-${a.id}`).value), 0, 1e12);
+      });
+      return t;
+    }
+
+    function estimateFees(targets){
+      if(!settings.feesEnabled) return 0;
+      let turnover = 0;
+      ASSETS.forEach(a => turnover += Math.abs(targets[a.id] - state.h[a.id]));
+      return turnover * settings.feeRate;
+    }
+
+    function updateSummary(){
+      const total = worth();
+      const t = readTargets();
+      const sumT = Object.values(t).reduce((s,v)=>s+v,0);
+      const fees = estimateFees(t);
+      const cashAfter = total - sumT - fees;
+
+      el('sumAvail').textContent = fmt0.format(total);
+      el('sumFees').textContent = settings.feesEnabled ? fmt2.format(fees) : '€0';
+      el('sumCash').textContent = fmt0.format(Math.max(0, cashAfter));
+
+      const err = el('allocErr');
+      if(cashAfter < -0.01){
+        err.hidden = false;
+        err.textContent = 'Your target allocations exceed what you can afford (after fees). Reduce allocations or leave more cash.';
+        el('btnEnd').disabled = true;
+      } else {
+        err.hidden = true;
+        err.textContent = '';
+        el('btnEnd').disabled = false;
+      }
+    }
+
+    function simulateReturn(assetId, eventId){
+      const a = ASSETS.find(x=>x.id===assetId);
+      const ev = EVENTS[eventId];
+      const imp = ev.impacts[assetId] || { muAdd:0, sigMul:1 };
+      const mu = a.baseMu + imp.muAdd;
+      const sigma = a.baseSigma * imp.sigMul * diffMult(settings);
+      return clamp(mu + randN()*sigma, a.clamp[0], a.clamp[1]);
+    }
+
+    function endMonth(){
+      const totalBefore = worth();
+      const t = readTargets();
+      const sumT = Object.values(t).reduce((s,v)=>s+v,0);
+      const fees = estimateFees(t);
+      const cashAfterFees = totalBefore - sumT - fees;
+
+      if(cashAfterFees < -0.01) return;
+
+      // Rebalance to targets
+      state.h = { ...t };
+      state.cash = Math.max(0, cashAfterFees);
+
+      const allocations = { ...state.h };
+      const cashStart = state.cash;
+      const returns = {};
+
+      ASSETS.forEach(a => {
+        const r = simulateReturn(a.id, state.eventId);
+        returns[a.id] = r;
+        state.h[a.id] *= (1 + r);
+      });
+
+      // Cash interest/inflation (simplified game model)
+      const ev = EVENTS[state.eventId];
+      const cashRate = settings.baseCashInterest + (ev.cash?.rateAdd ?? 0);
+      const infl = settings.inflEnabled ? (settings.baseInflation + (ev.cash?.inflAdd ?? 0)) : 0;
+      const netCash = clamp(cashRate - infl, -0.20, 0.20);
+      state.cash *= (1 + netCash);
+
+      const totalAfter = worth();
+      const nextEventId = chooseWeighted(ev.followUps);
+
+      const rec = {
+        month: state.month,
+        eventId: state.eventId,
+        nextEventId,
+        totalBefore,
+        totalAfter,
+        fees,
+        allocations,
+        returns,
+        cashRate,
+        infl
+      };
+      state.history.push(rec);
+
+      const won = totalAfter >= settings.goal;
+      const over = won || state.month >= settings.months || totalAfter <= 0;
+
+      showResult(rec, over, won);
+
+      if(!over){
+        state.month += 1;
+        state.eventId = nextEventId;
+      }
+
+      render(); // update background for when modal closes
+    }
+
+    function renderHistory(){
+      const ol = el('history');
+      ol.innerHTML = '';
+      if(state.history.length===0){
+        const li = document.createElement('li');
+        li.textContent = 'No months played yet.';
+        ol.appendChild(li);
+        return;
+      }
+      [...state.history].reverse().forEach(h => {
+        const li = document.createElement('li');
+        const d = h.totalAfter - h.totalBefore;
+        li.innerHTML = `Month ${h.month}: <strong>${EVENTS[h.eventId].title}</strong> → ${fmt0.format(h.totalAfter)} <span class="${d>=0?'good':'bad'}">(${d>=0?'+':''}${fmt0.format(d)})</span>`;
+        ol.appendChild(li);
+      });
+    }
+
+    function showAssetInfo(a){
+      el('assetTitle').textContent = `${a.icon} ${a.name}`;
+      const body = el('assetBodyText');
+      body.innerHTML = `
+        <div class="kpis">
+          <div class="kpi"><div class="label">Risk level</div><div class="value">${riskLabel(a)}</div></div>
+          <div class="kpi"><div class="label">Monthly volatility (game)</div><div class="value">≈ ${(a.baseSigma*100).toFixed(1)}%</div></div>
+          <div class="kpi"><div class="label">Reminder</div><div class="value">Not a forecast</div></div>
+        </div>
+        <p class="small"><strong>What it is:</strong> ${a.info.what}</p>
+        <p class="small"><strong>Why it’s risky:</strong> ${a.info.risk}</p>
+        <p class="small"><strong>How it works in this game:</strong> ${a.info.model}</p>
+        <div class="note">The numbers are simplified parameters for learning gameplay.</div>
+      `;
+      openModal('modalAsset');
+    }
+
+    function showResult(rec, over, won){
+      const ev = EVENTS[rec.eventId];
+      const next = EVENTS[rec.nextEventId];
+      const delta = rec.totalAfter - rec.totalBefore;
+      const cls = delta>=0 ? 'good' : 'bad';
+      const sign = delta>=0 ? '+' : '';
+
+      const rows = ASSETS.map(a => {
+        const r = rec.returns[a.id];
+        const rCls = r>=0 ? 'good' : 'bad';
+        return `<tr>
+          <td>${a.icon} ${a.name}</td>
+          <td>${fmt0.format(rec.allocations[a.id])}</td>
+          <td class="${rCls}">${fmtPct.format(r)}</td>
+        </tr>`;
+      }).join('');
+
+      const body = el('resBody');
+      body.innerHTML = `
+        <div class="kpis">
+          <div class="kpi"><div class="label">Month</div><div class="value">${rec.month}</div></div>
+          <div class="kpi"><div class="label">Net worth</div><div class="value">${fmt0.format(rec.totalAfter)}</div></div>
+          <div class="kpi"><div class="label">Change</div><div class="value ${cls}">${sign}${fmt0.format(delta)}</div></div>
+        </div>
+
+        <h3>What happened</h3>
+        <p class="small"><strong>${ev.title}</strong> — ${ev.desc}</p>
+
+        <h3>Asset returns this month</h3>
+        <div style="overflow:auto">
+          <table>
+            <thead><tr><th>Asset</th><th>Start allocation</th><th>Return</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+
+        <p class="small"><strong>Fees paid:</strong> ${fmt2.format(rec.fees)}<br/>
+        <strong>Cash this month:</strong> net ${fmtPct.format((rec.cashRate-rec.infl))} (${fmtPct.format(rec.cashRate)} interest, ${settings.inflEnabled ? fmtPct.format(rec.infl)+' inflation drag' : 'inflation off'})</p>
+
+        <div class="note"><strong>Lesson:</strong> ${ev.lesson}</div>
+
+        ${over ? `
+          <h3>Run ended</h3>
+          <p class="small">${won ? '✅ You reached the goal.' : '🧠 You did not reach the goal in time.'}</p>
+          <p class="small"><strong>Final:</strong> ${fmt0.format(rec.totalAfter)} (Goal ${fmt0.format(settings.goal)})</p>
+          <button class="primary" id="btnPlayAgain">Play again</button>
+        ` : `
+          <h3>Next month headline</h3>
+          <p class="small"><strong>${next.title}</strong> — ${next.desc}</p>
+          <button class="primary" id="btnContinue">Continue</button>
+        `}
+      `;
+
+      el('resTitle').textContent = over ? 'Month result (run ended)' : 'Month result';
+      openModal('modalResult');
+
+      // wire result buttons
+      const cont = document.getElementById('btnContinue');
+      if(cont){
+        cont.addEventListener('click', () => closeModal('modalResult'), { once:true });
+      }
+      const again = document.getElementById('btnPlayAgain');
+      if(again){
+        again.addEventListener('click', () => { closeModal('modalResult'); newRun(); }, { once:true });
+      }
+    }
+
+    function render(){
+      buildAssetRows();
+      renderNews();
+      renderStats();
+      renderTargets();
+      updateSummary();
+      renderHistory();
+    }
+
+    // UI wiring
+    el('btnEnd').addEventListener('click', endMonth);
+    el('btnRestart').addEventListener('click', newRun);
+
+    el('btnHow').addEventListener('click', ()=>openModal('modalHow'));
+    el('howClose').addEventListener('click', ()=>closeModal('modalHow'));
+
+    el('btnSettings').addEventListener('click', () => {
+      el('setStart').value = String(settings.start);
+      el('setGoal').value = String(settings.goal);
+      el('setMonths').value = String(settings.months);
+      el('setFees').checked = settings.feesEnabled;
+      el('setInfl').checked = settings.inflEnabled;
+      el('setDiff').value = settings.difficulty;
+      openModal('modalSettings');
+    });
+
+    el('setClose').addEventListener('click', ()=>closeModal('modalSettings'));
+    el('assetClose').addEventListener('click', ()=>closeModal('modalAsset'));
+    el('resClose').addEventListener('click', ()=>closeModal('modalResult'));
+
+    el('setApply').addEventListener('click', () => {
+      const start = clamp(num(el('setStart').value), 1, 1e12);
+      const goal = clamp(num(el('setGoal').value), 1, 1e12);
+      const months = clamp(Math.floor(num(el('setMonths').value)), 1, 120);
+
+      settings = {
+        ...settings,
+        start,
+        goal: Math.max(goal, start),
+        months,
+        feesEnabled: el('setFees').checked,
+        inflEnabled: el('setInfl').checked,
+        difficulty: el('setDiff').value || 'normal'
+      };
+
+      saveSettings(settings);
+      closeModal('modalSettings');
+      newRun();
+    });
+
+    // Close modals on outside click + ESC
+    document.querySelectorAll('.overlay').forEach(ov => {
+      ov.addEventListener('mousedown', (e)=>{ if(e.target===ov) ov.hidden=true; });
+    });
+    document.addEventListener('keydown', (e)=>{
+      if(e.key!=='Escape') return;
+      const open = [...document.querySelectorAll('.overlay')].filter(x=>!x.hidden);
+      if(open.length) open[open.length-1].hidden = true;
+    });
+
+    // Start
+    newRun();
+  })();
+  </script>
+</body>
+</html>
 
