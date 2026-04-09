@@ -3,17 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Market Survivor</title>
+  <title>Tirgus Izdzīvotājs</title>
   <style>
     :root{
-      /* Slightly lighter blues (requested) */
+      /* Slightly lighter blues */
       --bg:#0f1a2e;
       --card:#142446;
       --card2:#12213f;
 
       --line:rgba(255,255,255,.12);
-      --txt:#eaf1ff; --mut:#a8b6d8; --good:#44d38a; --bad:#ff5c7a; --warn:#ffd166; --acc:#6aa6ff;
-      --r:14px; --shadow:0 14px 40px rgba(0,0,0,.45);
+      --txt:#eaf1ff;
+      --mut:#a8b6d8;
+      --good:#44d38a;
+      --bad:#ff5c7a;
+      --warn:#ffd166;
+      --acc:#6aa6ff;
+
+      --r:14px;
+      --shadow:0 14px 40px rgba(0,0,0,.45);
       --font:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     }
     *{box-sizing:border-box}
@@ -25,21 +32,34 @@
         var(--bg);
     }
     .wrap{max-width:1100px;margin:0 auto;padding:16px}
+
     header{
       display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
       padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);
       background:rgba(20,36,70,.70);backdrop-filter:blur(10px);box-shadow:var(--shadow);
     }
     h1{margin:0;font-size:16px;letter-spacing:.2px}
+
     .btns{display:flex;gap:10px;flex-wrap:wrap}
     button{
-      border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--txt);
-      padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--txt);
+      padding:10px 12px;border-radius:12px;
+      cursor:pointer;font-weight:800;
+      transition: transform .08s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
     }
-    button:hover{background:rgba(255,255,255,.10)}
+    button:hover{
+      background:rgba(255,255,255,.10);
+      transform: translateY(-1px);
+      box-shadow:0 10px 24px rgba(0,0,0,.25);
+    }
+    button:active{transform: translateY(0px) scale(.99)}
     button.primary{border-color:rgba(106,166,255,.35);background:rgba(106,166,255,.18)}
+    button.primary:hover{border-color:rgba(106,166,255,.60)}
     button.danger{border-color:rgba(255,92,122,.35);background:rgba(255,92,122,.14)}
-    button:disabled{opacity:.55;cursor:not-allowed}
+    button:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
 
     .stats{
       display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;margin-top:12px
@@ -55,35 +75,72 @@
 
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
     @media (max-width:960px){.grid{grid-template-columns:1fr}}
+
     .card{
       padding:14px;border-radius:var(--r);border:1px solid var(--line);
       background:rgba(20,36,70,.62);backdrop-filter:blur(10px);box-shadow:var(--shadow);
     }
-    h2{margin:0 0 8px 0;font-size:14px}
+    h2{margin:0 0 10px 0;font-size:14px}
     h3{margin:12px 0 8px 0;font-size:13px;color:var(--txt)}
     p{margin:6px 0}
     ul{margin:8px 0 0 0}
+    ol{margin:8px 0 0 18px;color:var(--mut);font-size:13px}
+
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(106,166,255,.35);
+      background:rgba(106,166,255,.18);
+      font-weight:900;font-size:12px;
+      letter-spacing:.2px;
+    }
+    .headline{
+      font-size:18px;
+      font-weight:950;
+      margin-top:10px;
+    }
+    .factbox{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,15,26,.28);
+    }
+    .factbox .title{
+      color:var(--mut);
+      font-weight:900;
+      font-size:12px;
+      margin-bottom:6px;
+    }
+
     table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
     th,td{padding:10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
     th{background:rgba(255,255,255,.03);color:var(--mut);text-align:left}
     tr:last-child td{border-bottom:none}
 
-    .assetname{display:flex;align-items:center;gap:8px;font-weight:900}
+    .assetname{display:flex;align-items:center;gap:8px;font-weight:950}
     .risk{
       display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;
       border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--mut);font-size:12px
     }
     .dot{width:8px;height:8px;border-radius:99px;display:inline-block}
     .low .dot{background:var(--good)} .med .dot{background:var(--warn)} .high .dot{background:var(--bad)}
-    .info{padding:4px 8px;border-radius:10px;font-size:12px;font-weight:900}
+
+    .info{
+      padding:4px 8px;border-radius:10px;font-size:12px;font-weight:950;
+      border-color:rgba(255,255,255,.12);
+    }
 
     input[type=number], select{
       width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
-      background:rgba(10,15,26,.55);color:var(--txt);outline:none
+      background:rgba(10,15,26,.55);color:var(--txt);outline:none;
+      transition: box-shadow .15s ease, border-color .15s ease;
     }
     input[type=number]:focus, select:focus{
-      border-color:rgba(106,166,255,.55); box-shadow:0 0 0 3px rgba(106,166,255,.18)
+      border-color:rgba(106,166,255,.55);
+      box-shadow:0 0 0 3px rgba(106,166,255,.18)
     }
+
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:10px}
     .pill{
       display:inline-block;padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
@@ -107,60 +164,66 @@
       padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.10);background:rgba(20,36,70,.98)
     }
     .modalbody{padding:14px}
-    .note{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.10);color:var(--mut);font-size:12px}
     .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
     @media (max-width:720px){.kpis{grid-template-columns:1fr}}
     .kpi{border:1px solid rgba(255,255,255,.12);background:rgba(10,15,26,.35);border-radius:12px;padding:10px 12px}
     .kpi .label{margin:0;color:var(--mut);font-size:12px}
-    .kpi .value{margin-top:4px;font-weight:900}
-    ol{margin:8px 0 0 18px;color:var(--mut);font-size:13px}
+    .kpi .value{margin-top:4px;font-weight:950}
+
+    /* Make positive/negative clearer inside tables */
+    td.good, td.bad { font-weight:900; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div>
-        <h1 id="txtAppName">Market Survivor</h1>
+        <h1 id="txtAppName">Tirgus Izdzīvotājs</h1>
       </div>
       <div class="btns">
-        <button id="btnHow">How to play</button>
-        <button id="btnSettings" class="primary">⚙️ Settings</button>
-        <button id="btnRestart" class="danger">↻ Restart</button>
+        <button id="btnHow">Kā spēlēt</button>
+        <button id="btnSettings" class="primary">⚙️ Iestatījumi</button>
+        <button id="btnRestart" class="danger">↻ Sākt no jauna</button>
       </div>
     </header>
 
     <section class="stats">
-      <div class="stat"><div class="label" id="labMonth">Month</div><div class="value" id="statMonth">—</div></div>
-      <div class="stat"><div class="label" id="labWorth">Net worth</div><div class="value" id="statWorth">—</div></div>
-      <div class="stat"><div class="label" id="labGoal">Goal</div><div class="value" id="statGoal">—</div></div>
-      <div class="stat"><div class="label" id="labCash">Cash</div><div class="value" id="statCash">—</div></div>
+      <div class="stat"><div class="label" id="labMonth">Mēnesis</div><div class="value" id="statMonth">—</div></div>
+      <div class="stat"><div class="label" id="labWorth">Kopā</div><div class="value" id="statWorth">—</div></div>
+      <div class="stat"><div class="label" id="labGoal">Mērķis</div><div class="value" id="statGoal">—</div></div>
+      <div class="stat"><div class="label" id="labCash">Nauda</div><div class="value" id="statCash">—</div></div>
     </section>
 
     <main class="grid">
       <section class="card">
-        <h2 id="labNewsHeading">News briefing</h2>
-        <div class="value" id="evTitle">—</div>
+        <div class="badge" id="newsBadge">🗞️ Ziņu jaunumi</div>
+
+        <div class="headline" id="evTitle">—</div>
         <p class="small" id="evDesc">—</p>
 
-        <h3 id="labWhy">Why this matters</h3>
-        <ul id="evWhy"></ul>
+        <div class="factbox">
+          <div class="title" id="labFacts">Fakti</div>
+          <ul id="evFacts"></ul>
+        </div>
 
-        <h3 id="labNext">What might happen next</h3>
-        <ul id="evNext"></ul>
+        <div class="factbox">
+          <div class="title" id="labNext">Kas var notikt tālāk</div>
+          <ul id="evNext"></ul>
+        </div>
       </section>
 
       <section class="card">
-        <h2 id="labAllocHeading">Allocate your money</h2>
-        <p class="small" id="labAllocHelp">—</p>
+        <h2 id="labAllocHeading">Sadalīt ieguldījumus šim mēnesim</h2>
+        <p class="small" id="labAllocHelp">Ievadi summas (€). Vari sadalīt starp vairākiem variantiem. Neizmantotais paliek kā nauda.</p>
 
         <div style="overflow:auto">
           <table>
             <thead>
               <tr>
-                <th id="thAsset">Asset</th>
-                <th id="thRisk">Risk</th>
-                <th id="thCurrent">Current</th>
-                <th id="thTarget">Target (€)</th>
+                <th id="thAsset">Aktīvs</th>
+                <th id="thRisk">Risks</th>
+                <th id="thCurrent">Pašlaik</th>
+                <th id="thTarget">Ieguldīt (€)</th>
               </tr>
             </thead>
             <tbody id="assetBody"></tbody>
@@ -168,10 +231,10 @@
         </div>
 
         <div class="row">
-          <span class="pill" id="pillAvail">Available: <strong id="sumAvail">—</strong></span>
-          <span class="pill" id="pillFees">Estimated fees: <strong id="sumFees">—</strong></span>
-          <span class="pill" id="pillCash">Cash after fees: <strong id="sumCash">—</strong></span>
-          <button class="primary" id="btnEnd">End month ▶</button>
+          <span class="pill" id="pillAvail">Pieejams: <strong id="sumAvail">—</strong></span>
+          <span class="pill" id="pillFees">Komisijas: <strong id="sumFees">—</strong></span>
+          <span class="pill" id="pillCash">Paliek nauda: <strong id="sumCash">—</strong></span>
+          <button class="primary" id="btnEnd">Nākamais mēnesis ▶</button>
         </div>
 
         <div class="error" id="allocErr" hidden></div>
@@ -179,7 +242,7 @@
     </main>
 
     <section class="card">
-      <h2 id="labHistory">History</h2>
+      <h2 id="labHistory">Vēsture</h2>
       <ol id="history"></ol>
     </section>
   </div>
@@ -188,13 +251,13 @@
   <div class="overlay" id="modalHow" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="howTitle">
       <div class="modalhead">
-        <div class="value" id="howTitle">How to play</div>
+        <div class="value" id="howTitle">Kā spēlēt</div>
         <button id="howClose">✕</button>
       </div>
       <div class="modalbody">
         <p class="small" id="howIntro">—</p>
         <ul class="small" id="howList"></ul>
-        <div class="note" id="howNote">—</div>
+        <p class="small" id="howNote">—</p>
       </div>
     </div>
   </div>
@@ -203,40 +266,41 @@
   <div class="overlay" id="modalSettings" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="setTitle">
       <div class="modalhead">
-        <div class="value" id="setTitle">Settings</div>
+        <div class="value" id="setTitle">Iestatījumi</div>
         <button id="setClose">✕</button>
       </div>
       <div class="modalbody">
         <div class="kpis">
           <div>
-            <div class="small" id="setLabStart">Starting money (€)</div>
+            <div class="small" id="setLabStart">Sākuma nauda (€)</div>
             <input id="setStart" type="number" min="1" step="50" />
           </div>
           <div>
-            <div class="small" id="setLabGoal">Goal (€)</div>
+            <div class="small" id="setLabGoal">Mērķis (€)</div>
             <input id="setGoal" type="number" min="1" step="50" />
           </div>
           <div>
-            <div class="small" id="setLabMonths">Months</div>
+            <div class="small" id="setLabMonths">Mēneši</div>
             <input id="setMonths" type="number" min="1" max="120" step="1" />
           </div>
         </div>
 
         <div class="row" style="margin-top:12px">
-          <label class="small"><input id="setFees" type="checkbox" /> <span id="setLabFees">Enable transaction fees</span></label>
-          <label class="small"><input id="setInfl" type="checkbox" /> <span id="setLabInfl">Enable inflation drag on cash</span></label>
+          <label class="small"><input id="setFees" type="checkbox" /> <span id="setLabFees">Komisijas (par katru maiņu)</span></label>
+          <label class="small"><input id="setInfl" type="checkbox" /> <span id="setLabInfl">Inflācija ietekmē naudu</span></label>
+          <label class="small"><input id="setSound" type="checkbox" /> <span id="setLabSound">Skaņa</span></label>
 
           <div style="min-width:220px">
-            <div class="small" id="setLabDiff">Difficulty</div>
+            <div class="small" id="setLabDiff">Grūtība</div>
             <select id="setDiff">
-              <option value="easy" id="optEasy">Easy</option>
-              <option value="normal" id="optNormal">Normal</option>
-              <option value="hard" id="optHard">Hard</option>
+              <option value="easy" id="optEasy">Viegli</option>
+              <option value="normal" id="optNormal">Normāli</option>
+              <option value="hard" id="optHard">Grūti</option>
             </select>
           </div>
 
           <div style="min-width:200px">
-            <div class="small" id="setLabLang">Language</div>
+            <div class="small" id="setLabLang">Valoda</div>
             <select id="setLang">
               <option value="lv">Latviešu</option>
               <option value="en">English</option>
@@ -245,10 +309,8 @@
         </div>
 
         <div class="row" style="justify-content:flex-end">
-          <button class="primary" id="setApply">Apply & restart</button>
+          <button class="primary" id="setApply">Pielietot un sākt no jauna</button>
         </div>
-
-        <div class="note" id="setNote">—</div>
       </div>
     </div>
   </div>
@@ -257,7 +319,7 @@
   <div class="overlay" id="modalAsset" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="assetTitle">
       <div class="modalhead">
-        <div class="value" id="assetTitle">Asset</div>
+        <div class="value" id="assetTitle">Aktīvs</div>
         <button id="assetClose">✕</button>
       </div>
       <div class="modalbody" id="assetBodyText"></div>
@@ -268,7 +330,7 @@
   <div class="overlay" id="modalResult" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resTitle">
       <div class="modalhead">
-        <div class="value" id="resTitle">Month result</div>
+        <div class="value" id="resTitle">Rezultāts</div>
         <button id="resClose">✕</button>
       </div>
       <div class="modalbody" id="resBody"></div>
@@ -279,176 +341,24 @@
   (() => {
     'use strict';
 
-    const SETTINGS_KEY = 'market_survivor_settings_v2';
+    const SETTINGS_KEY = 'market_survivor_settings_v3';
 
     const DEFAULTS = Object.freeze({
-      lang: 'lv',          // default Latvian, as requested
+      lang: 'lv',
       start: 1000,
       goal: 2000,
       months: 12,
+
       feesEnabled: false,
-      feeRate: 0.002,      // 0.2% turnover
-      inflEnabled: true,   // simplified inflation drag on cash
+      feeRate: 0.002,
+
+      inflEnabled: true,
       baseCashInterest: 0.001,
       baseInflation: 0.002,
-      difficulty: 'normal'
+
+      difficulty: 'normal',
+      soundEnabled: true
     });
-
-    const UI = {
-      en: {
-        appName: 'Market Survivor',
-        btnHow: 'How to play',
-        btnSettings: '⚙️ Settings',
-        btnRestart: '↻ Restart',
-
-        labMonth: 'Month',
-        labWorth: 'Net worth',
-        labGoal: 'Goal',
-        labCash: 'Cash (uninvested)',
-
-        labNewsHeading: 'News briefing',
-        labWhy: 'Why this matters',
-        labNext: 'What might happen next',
-
-        labAllocHeading: 'Allocate your money for this month',
-        labAllocHelp: 'Enter target allocations (€). You can split across multiple options. Unallocated stays as cash.',
-        thAsset: 'Asset',
-        thRisk: 'Risk',
-        thCurrent: 'Current',
-        thTarget: 'Target (€)',
-        pillAvail: 'Available:',
-        pillFees: 'Estimated fees:',
-        pillCash: 'Cash after fees:',
-        btnEnd: 'End month ▶',
-
-        labHistory: 'History',
-
-        howTitle: 'How to play',
-        howIntro: (s) => `Default run: start €${s.start}, goal €${s.goal}, time limit ${s.months} months.`,
-        howSteps: [
-          'Read the news headline.',
-          'Split your money across assets (you choose the amounts).',
-          'Press “End month” to resolve results.',
-          'Use the result summary to learn what helped and what hurt.'
-        ],
-        howNote: 'Not financial advice. This is a learning game.',
-
-        setTitle: 'Settings',
-        setLabStart: 'Starting money (€)',
-        setLabGoal: 'Goal (€)',
-        setLabMonths: 'Months',
-        setLabFees: 'Enable transaction fees',
-        setLabInfl: 'Enable inflation drag on cash',
-        setLabDiff: 'Difficulty',
-        optEasy: 'Easy (lower volatility)',
-        optNormal: 'Normal',
-        optHard: 'Hard (higher volatility)',
-        setLabLang: 'Language',
-        setApply: 'Apply & restart',
-        setNote: 'Changing settings restarts the run.',
-
-        risk: { low:'LOW', med:'MED', high:'HIGH' },
-
-        resultTitle: (ended) => ended ? 'Month result (run ended)' : 'Month result',
-        resMonth: 'Month',
-        resNet: 'Net worth',
-        resChange: 'Change',
-        resWhat: 'What happened',
-        resWhy: 'Why it moved markets',
-        resWinners: 'Quick take',
-        resBest: 'Best this month',
-        resWorst: 'Worst this month',
-        resTable: 'Your assets this month',
-        resAsset: 'Asset',
-        resStart: 'Start (€)',
-        resRet: 'Return',
-        resEnd: 'End (€)',
-        resFees: 'Fees',
-        resNext: 'Next headline',
-        resContinue: 'Continue',
-        resAgain: 'Play again',
-        resEndedWin: '✅ You reached the goal.',
-        resEndedLose: '🧠 You did not reach the goal in time.',
-        histPrefix: 'Month'
-      },
-
-      lv: {
-        appName: 'Tirgus Izdzīvotājs',
-        btnHow: 'Kā spēlēt',
-        btnSettings: '⚙️ Iestatījumi',
-        btnRestart: '↻ Sākt no jauna',
-
-        labMonth: 'Mēnesis',
-        labWorth: 'Kopējā vērtība',
-        labGoal: 'Mērķis',
-        labCash: 'Nauda (neieguldīta)',
-
-        labNewsHeading: 'Ziņu kopsavilkums',
-        labWhy: 'Kāpēc tas ir svarīgi',
-        labNext: 'Kas var notikt tālāk',
-
-        labAllocHeading: 'Sadalīt ieguldījumus šim mēnesim',
-        labAllocHelp: 'Ievadi mērķa sadalījumu (€). Vari sadalīt starp vairākiem variantiem. Neizmantotais paliek kā nauda.',
-        thAsset: 'Aktīvs',
-        thRisk: 'Risks',
-        thCurrent: 'Pašlaik',
-        thTarget: 'Mērķis (€)',
-        pillAvail: 'Pieejams:',
-        pillFees: 'Aptuvenās komisijas:',
-        pillCash: 'Nauda pēc komisijām:',
-        btnEnd: 'Pabeigt mēnesi ▶',
-
-        labHistory: 'Vēsture',
-
-        howTitle: 'Kā spēlēt',
-        howIntro: (s) => `Pēc noklusējuma: sākums €${s.start}, mērķis €${s.goal}, laika limits ${s.months} mēneši.`,
-        howSteps: [
-          'Izlasi ziņu virsrakstu.',
-          'Sadali naudu pa aktīviem (summas izvēlies tu).',
-          'Spied “Pabeigt mēnesi”, lai redzētu rezultātu.',
-          'Rezultātu kopsavilkums parāda, kas palīdzēja un kas kaitēja.'
-        ],
-        howNote: 'Nav finanšu padoms. Mācību simulācija.',
-
-        setTitle: 'Iestatījumi',
-        setLabStart: 'Sākuma nauda (€)',
-        setLabGoal: 'Mērķis (€)',
-        setLabMonths: 'Mēneši',
-        setLabFees: 'Ieslēgt komisijas (mazāk pārtirgoties)',
-        setLabInfl: 'Ieslēgt inflācijas ietekmi naudai',
-        setLabDiff: 'Grūtība',
-        optEasy: 'Viegli (mazāka svārstība)',
-        optNormal: 'Normāli',
-        optHard: 'Grūti (lielāka svārstība)',
-        setLabLang: 'Valoda',
-        setApply: 'Pielietot un sākt no jauna',
-        setNote: 'Mainot iestatījumus, spēle sākas no jauna.',
-
-        risk: { low:'ZEMS', med:'VIDĒJS', high:'AUGSTS' },
-
-        resultTitle: (ended) => ended ? 'Mēneša rezultāts (spēle beigusies)' : 'Mēneša rezultāts',
-        resMonth: 'Mēnesis',
-        resNet: 'Kopējā vērtība',
-        resChange: 'Izmaiņa',
-        resWhat: 'Kas notika',
-        resWhy: 'Kāpēc tas ietekmēja tirgu',
-        resWinners: 'Īsumā',
-        resBest: 'Labākais šomēnes',
-        resWorst: 'Sliktākais šomēnes',
-        resTable: 'Tavi aktīvi šomēnes',
-        resAsset: 'Aktīvs',
-        resStart: 'Sākums (€)',
-        resRet: 'Atdeve',
-        resEnd: 'Beigas (€)',
-        resFees: 'Komisijas',
-        resNext: 'Nākamais virsraksts',
-        resContinue: 'Turpināt',
-        resAgain: 'Spēlēt vēlreiz',
-        resEndedWin: '✅ Tu sasniedzi mērķi.',
-        resEndedLose: '🧠 Mērķi neizdevās sasniegt laikā.',
-        histPrefix: 'Mēnesis'
-      }
-    };
 
     function loadSettings(){
       try{
@@ -462,12 +372,11 @@
     }
 
     let settings = loadSettings();
-    let state = null;
 
-    function L(){ return UI[settings.lang] || UI.lv; }
+    function localeForLang(lang){ return lang === 'lv' ? 'lv-LV' : 'en-US'; }
 
     function makeFormatters(){
-      const locale = settings.lang === 'lv' ? 'lv-LV' : 'en-US';
+      const locale = localeForLang(settings.lang);
       return {
         c0: new Intl.NumberFormat(locale, { style:'currency', currency:'EUR', maximumFractionDigits:0 }),
         c2: new Intl.NumberFormat(locale, { style:'currency', currency:'EUR', maximumFractionDigits:2 }),
@@ -476,72 +385,222 @@
     }
     let fmt = makeFormatters();
 
+    const UI = {
+      en: {
+        appName: 'Market Survivor',
+        newsBadge: '🗞️ News update',
+        facts: 'Facts',
+        next: 'What might happen next',
+
+        btnHow: 'How to play',
+        btnSettings: '⚙️ Settings',
+        btnRestart: '↻ Restart',
+        btnNextMonth: 'Next month ▶',
+
+        labMonth: 'Month',
+        labWorth: 'Total',
+        labGoal: 'Goal',
+        labCash: 'Cash',
+
+        allocHeading: 'Allocate for this month',
+        allocHelp: 'Enter amounts (€). You can split across multiple options. Unused stays as cash.',
+        thAsset: 'Asset',
+        thRisk: 'Risk',
+        thCurrent: 'Current',
+        thTarget: 'Invest (€)',
+        pillAvail: 'Available:',
+        pillFees: 'Fees:',
+        pillCash: 'Cash left:',
+
+        history: 'History',
+
+        howTitle: 'How to play',
+        howIntro: (s) => `You start with ${fmt.c0.format(s.start)}. Goal: ${fmt.c0.format(s.goal)} in ${s.months} months.`,
+        howSteps: [
+          'Read the news.',
+          'Type how much (€) you invest in each asset.',
+          'Press “Next month”.',
+          'Read the result to see what went up and what went down.'
+        ],
+        howNote: 'Learning game (not financial advice).',
+
+        setTitle: 'Settings',
+        setStart: 'Starting money (€)',
+        setGoal: 'Goal (€)',
+        setMonths: 'Months',
+        setFees: 'Fees (when you change allocations)',
+        setInfl: 'Inflation affects cash',
+        setSound: 'Sound',
+        setDiff: 'Difficulty',
+        diffEasy: 'Easy',
+        diffNormal: 'Normal',
+        diffHard: 'Hard',
+        setLang: 'Language',
+        setApply: 'Apply & restart',
+
+        risk: { low:'LOW', med:'MED', high:'HIGH' },
+
+        resTitle: (ended)=> ended ? 'Result (run ended)' : 'Result',
+        resMonth: 'Month',
+        resTotal: 'Total',
+        resChange: 'Change',
+        resEvent: 'What happened',
+        resFacts: 'Why it matters',
+        resTable: 'Your positions this month',
+        colAsset: 'Asset',
+        colStart: 'Start (€)',
+        colPct: 'Change (%)',
+        colEur: 'Change (€)',
+        colResult: 'Result (€)',
+        resFees: 'Fees',
+        resContinue: 'Continue',
+        resAgain: 'Play again',
+        endedWin: '✅ You reached the goal.',
+        endedLose: '🧠 You didn’t reach the goal in time.'
+      },
+
+      lv: {
+        appName: 'Tirgus Izdzīvotājs',
+        newsBadge: '🗞️ Ziņu jaunumi',
+        facts: 'Fakti',
+        next: 'Kas var notikt tālāk',
+
+        btnHow: 'Kā spēlēt',
+        btnSettings: '⚙️ Iestatījumi',
+        btnRestart: '↻ Sākt no jauna',
+        btnNextMonth: 'Nākamais mēnesis ▶',
+
+        labMonth: 'Mēnesis',
+        labWorth: 'Kopā',
+        labGoal: 'Mērķis',
+        labCash: 'Nauda',
+
+        allocHeading: 'Sadalīt ieguldījumus šim mēnesim',
+        allocHelp: 'Ievadi summas (€). Vari sadalīt starp vairākiem variantiem. Neizmantotais paliek kā nauda.',
+        thAsset: 'Aktīvs',
+        thRisk: 'Risks',
+        thCurrent: 'Pašlaik',
+        thTarget: 'Ieguldīt (€)',
+        pillAvail: 'Pieejams:',
+        pillFees: 'Komisijas:',
+        pillCash: 'Paliek nauda:',
+
+        history: 'Vēsture',
+
+        howTitle: 'Kā spēlēt',
+        howIntro: (s) => `Sākumā tev ir ${fmt.c0.format(s.start)}. Mērķis: ${fmt.c0.format(s.goal)} ${s.months} mēnešos.`,
+        howSteps: [
+          'Izlasi ziņas.',
+          'Ieraksti, cik (€) ieguldi katrā aktīvā.',
+          'Spied “Nākamais mēnesis”.',
+          'Rezultātā redzi, kas kāpa un kas krita.'
+        ],
+        howNote: 'Mācību spēle (nav finanšu padoms).',
+
+        setTitle: 'Iestatījumi',
+        setStart: 'Sākuma nauda (€)',
+        setGoal: 'Mērķis (€)',
+        setMonths: 'Mēneši',
+        setFees: 'Komisijas (ja maini sadalījumu)',
+        setInfl: 'Inflācija ietekmē naudu',
+        setSound: 'Skaņa',
+        setDiff: 'Grūtība',
+        diffEasy: 'Viegli',
+        diffNormal: 'Normāli',
+        diffHard: 'Grūti',
+        setLang: 'Valoda',
+        setApply: 'Pielietot un sākt no jauna',
+
+        risk: { low:'ZEMS', med:'VIDĒJS', high:'AUGSTS' },
+
+        resTitle: (ended)=> ended ? 'Rezultāts (spēle beigusies)' : 'Rezultāts',
+        resMonth: 'Mēnesis',
+        resTotal: 'Kopā',
+        resChange: 'Izmaiņa',
+        resEvent: 'Kas notika',
+        resFacts: 'Kāpēc tas var ietekmēt cenas',
+        resTable: 'Tavi ieguldījumi šomēnes',
+        colAsset: 'Aktīvs',
+        colStart: 'Sākums (€)',
+        colPct: 'Izmaiņa (%)',
+        colEur: 'Izmaiņa (€)',
+        colResult: 'Rezultāts (€)',
+        resFees: 'Komisijas',
+        resContinue: 'Turpināt',
+        resAgain: 'Spēlēt vēlreiz',
+        endedWin: '✅ Tu sasniedzi mērķi.',
+        endedLose: '🧠 Mērķi nepaspēji sasniegt laikā.'
+      }
+    };
+
+    function T(){ return UI[settings.lang] || UI.lv; }
+
     const ASSETS = [
       {
-        id: 'stocks', icon: '📈', riskClass: 'med',
+        id:'stocks', icon:'📈', riskClass:'med',
         baseMu: 0.006, baseSigma: 0.050, clamp: [-0.35, 0.35],
-        name: { en:'Stocks', lv:'Akcijas' },
-        info: {
-          en: {
-            what: 'Shares of companies. Value changes with expectations about profits and growth.',
-            risk: 'Can drop sharply in bad news or recessions; no guarantees.',
-            model: 'Medium volatility; sensitive to growth and rate news.'
+        name:{ en:'Stocks', lv:'Akcijas' },
+        info:{
+          en:{
+            what:'Shares in companies.',
+            risk:'Can rise fast, can fall fast.',
+            model:'Medium swings. Often reacts to economy and interest rates.'
           },
-          lv: {
-            what: 'Uzņēmumu akcijas. Cena mainās līdz ar gaidām par peļņu un izaugsmi.',
-            risk: 'Sliktas ziņas vai recesija var strauji nosist cenu; garantiju nav.',
-            model: 'Vidēja svārstība; jutīgas pret izaugsmi un likmju ziņām.'
+          lv:{
+            what:'Daļa no uzņēmumiem (akcijas).',
+            risk:'Var ātri kāpt, var ātri krist.',
+            model:'Vidējas svārstības. Bieži reaģē uz ekonomiku un procentiem.'
           }
         }
       },
       {
-        id: 'bonds', icon: '🏦', riskClass: 'low',
+        id:'bonds', icon:'🏦', riskClass:'low',
         baseMu: 0.002, baseSigma: 0.015, clamp: [-0.12, 0.15],
-        name: { en:'Bonds', lv:'Obligācijas' },
-        info: {
-          en: {
-            what: 'Loans to governments/companies. Earn interest; prices also move.',
-            risk: 'When rates rise, existing bond prices often fall (rate risk).',
-            model: 'Lower volatility; can dip during rate hikes; steadier in fear.'
+        name:{ en:'Bonds', lv:'Obligācijas' },
+        info:{
+          en:{
+            what:'Loans with interest.',
+            risk:'Can drop when interest rates rise.',
+            model:'Smaller swings. Often steadier in scary months.'
           },
-          lv: {
-            what: 'Aizdevumi valstij/uzņēmumiem. Ir procenti, un mainās arī cena.',
-            risk: 'Kad likmes kāpj, esošo obligāciju cenas bieži krīt (likmju risks).',
-            model: 'Zemāka svārstība; likmju kāpumos var krist; bailēs parasti stabilākas.'
+          lv:{
+            what:'Aizdevumi ar procentiem (obligācijas).',
+            risk:'Var krist, ja procenti strauji kāpj.',
+            model:'Mazākas svārstības. Bieži stabilākas bailēs.'
           }
         }
       },
       {
-        id: 'realEstate', icon: '🏠', riskClass: 'med',
+        id:'realEstate', icon:'🏠', riskClass:'med',
         baseMu: 0.004, baseSigma: 0.025, clamp: [-0.20, 0.24],
-        name: { en:'Real Estate', lv:'Nekustamais īpašums' },
-        info: {
-          en: {
-            what: 'Simplified property bucket (prices/rents). Often rate-sensitive.',
-            risk: 'Can fall when financing becomes expensive or economy weakens.',
-            model: 'Moderate volatility; pressured by rising rates.'
+        name:{ en:'Real Estate', lv:'Īpašumi' },
+        info:{
+          en:{
+            what:'Simplified property value bucket.',
+            risk:'Can fall when loans get expensive.',
+            model:'Medium swings. Sensitive to interest rates.'
           },
-          lv: {
-            what: 'Vienkāršots īpašumu tirgus (cenas/nomas). Bieži atkarīgs no likmēm.',
-            risk: 'Var krist, ja kredīti kļūst dārgi vai ekonomika bremzē.',
-            model: 'Mērena svārstība; likmju kāpumi spiež uz leju.'
+          lv:{
+            what:'Vienkāršoti: īpašumu tirgus.',
+            risk:'Var krist, ja kredīti kļūst dārgi.',
+            model:'Vidējas svārstības. Jutīgs pret procentiem.'
           }
         }
       },
       {
-        id: 'crypto', icon: '🪙', riskClass: 'high',
+        id:'crypto', icon:'🪙', riskClass:'high',
         baseMu: 0.010, baseSigma: 0.120, clamp: [-0.70, 0.90],
-        name: { en:'Crypto', lv:'Kripto' },
-        info: {
-          en: {
-            what: 'High-volatility digital asset bucket (simplified).',
-            risk: 'Large swings are common; sentiment can flip quickly.',
-            model: 'Highest volatility; booms in hype, crashes in fear.'
+        name:{ en:'Crypto', lv:'Kripto' },
+        info:{
+          en:{
+            what:'High-volatility digital assets.',
+            risk:'Big swings are common.',
+            model:'Largest swings. Often rises in hype, falls in fear.'
           },
-          lv: {
-            what: 'Augstas svārstības digitālo aktīvu grozs (vienkāršoti).',
-            risk: 'Lieli kāpumi/kritumi ir bieži; noskaņojums var strauji mainīties.',
-            model: 'Vislielākā svārstība; ažiotāžā aug, bailēs krīt.'
+          lv:{
+            what:'Svārstīgi digitālie aktīvi.',
+            risk:'Lieli kāpumi un kritumi ir bieži.',
+            model:'Vislielākās svārstības. Ažiotāžā aug, bailēs krīt.'
           }
         }
       }
@@ -549,550 +608,448 @@
 
     const EVENTS = {
       calm: {
-        text: {
-          en: {
-            title:'Markets are calm',
-            desc:'No major shocks. The focus is steady growth and “business as usual.”',
-            why:['Low uncertainty → smaller swings.','Risk can build quietly when things feel easy.'],
-            lesson:'Calm periods can tempt you to over-risk.'
+        icon:'🟢',
+        text:{
+          en:{
+            title:'Quiet month',
+            desc:'No major global shocks. Markets move calmer.',
+            facts:['Lower fear usually means smaller swings.','But calm can make people take too much risk.']
           },
-          lv: {
-            title:'Tirgus ir mierīgs',
-            desc:'Nav lielu satricinājumu. Vairāk “ikdiena” nekā panika.',
-            why:['Mazāk neskaidrības → parasti mazākas svārstības.','Miers var iemidzināt modrību.'],
-            lesson:'Mierā ir viegli uzņemties par daudz riska.'
+          lv:{
+            title:'Mierīgs mēnesis',
+            desc:'Nav lielu pasaules satricinājumu. Cenas kustas mierīgāk.',
+            facts:['Kad nav baiļu, svārstība parasti ir mazāka.','Mierā cilvēki bieži riskē par daudz.']
           }
         },
-        cash: { rateAdd: 0.000, inflAdd: 0.000 },
-        impacts: {
+        cash:{ rateAdd:0.000, inflAdd:0.000 },
+        impacts:{
           stocks:{muAdd:0.000,sigMul:0.95}, bonds:{muAdd:0.000,sigMul:0.95},
           realEstate:{muAdd:0.000,sigMul:0.95}, crypto:{muAdd:0.000,sigMul:0.95}
         },
-        followUps: [
-          { id:'rates_hint', w:3, teaser:{ en:'Central bank hints about future rates', lv:'Centrālā banka māj par likmēm' } },
-          { id:'earnings',   w:3, teaser:{ en:'Company results surprise investors', lv:'Finanšu rezultāti pārsteidz investorus' } },
-          { id:'tech_hype',  w:2, teaser:{ en:'A tech narrative attracts speculators', lv:'Tehnoloģiju tēma pievelk spekulantus' } },
-          { id:'energy',     w:1, teaser:{ en:'Energy costs jump on tensions', lv:'Enerģijas izmaksas strauji kāpj' } }
+        followUps:[
+          { id:'war', w:2, teaser:{ en:'War breaks out', lv:'Sākas karš' } },
+          { id:'oil_route', w:2, teaser:{ en:'Oil route problems', lv:'Problēmas ar naftas piegādi' } },
+          { id:'good', w:2, teaser:{ en:'Better economy news', lv:'Labākas ziņas par ekonomiku' } },
+          { id:'hack', w:1, teaser:{ en:'Major crypto hack', lv:'Liels kripto uzlauzums' } }
         ]
       },
 
-      earnings: {
-        text: {
-          en: {
-            title:'Earnings season surprises',
-            desc:'Some companies beat expectations, others disappoint — volatility rises.',
-            why:['Updates change “expected future profit.”','Even good news can be “not good enough.”'],
-            lesson:'Markets move on expectations, not just headlines.'
+      war: {
+        icon:'⚔️',
+        text:{
+          en:{
+            title:'War starts',
+            desc:'Two countries start a war. Fear rises.',
+            facts:['War increases uncertainty.','In fear, people sell riskier assets first.']
           },
-          lv: {
-            title:'Finanšu rezultātu sezona pārsteidz',
-            desc:'Daži uzņēmumi pārspēj gaidas, citi pieviļ — svārstība pieaug.',
-            why:['Mainās gaidas par nākotnes peļņu.','Arī labas ziņas var būt “par maz”.'],
-            lesson:'Tirgus reaģē uz gaidām, ne tikai ziņām.'
+          lv:{
+            title:'Sākas karš',
+            desc:'Divas valstis sāk karu. Tirgū ir bailes.',
+            facts:['Karš nozīmē lielāku neskaidrību.','Bailēs biežāk pārdod riskantus aktīvus.']
           }
         },
-        cash: { rateAdd: 0.000, inflAdd: 0.000 },
-        impacts: {
-          stocks:{muAdd:0.004,sigMul:1.20}, bonds:{muAdd:0.000,sigMul:1.05},
-          realEstate:{muAdd:0.001,sigMul:1.05}, crypto:{muAdd:0.002,sigMul:1.10}
+        cash:{ rateAdd:0.000, inflAdd:0.001 },
+        impacts:{
+          stocks:{muAdd:-0.012,sigMul:1.40}, bonds:{muAdd:0.006,sigMul:1.20},
+          realEstate:{muAdd:-0.010,sigMul:1.30}, crypto:{muAdd:-0.020,sigMul:1.65}
         },
-        followUps: [
-          { id:'risk_on',  w:3, teaser:{ en:'Optimism spreads (risk appetite rises)', lv:'Riska apetīte pieaug' } },
-          { id:'risk_off', w:2, teaser:{ en:'Nerves increase (risk appetite falls)', lv:'Riska apetīte krīt' } },
-          { id:'calm',     w:1, teaser:{ en:'Markets digest the news', lv:'Tirgus “sagremo” ziņas' } }
+        followUps:[
+          { id:'oil_route', w:3, teaser:{ en:'Oil route closes', lv:'Aizver naftas ceļu' } },
+          { id:'panic', w:2, teaser:{ en:'Market panic', lv:'Tirgū panika' } },
+          { id:'calm', w:1, teaser:{ en:'Tensions cool a bit', lv:'Spriedze mazliet krīt' } }
         ]
       },
 
-      rates_hint: {
-        text: {
-          en: {
-            title:'Central bank shifts rate expectations',
-            desc:'Investors re-price assets based on where interest rates might go next.',
-            why:['Higher rates = borrowing costs up (growth pressure).','Bond prices can fall when yields rise.'],
-            lesson:'Rate expectations can move many assets at the same time.'
+      oil_route: {
+        icon:'🚢',
+        text:{
+          en:{
+            title:'Oil route is blocked',
+            desc:'A major oil shipping route is blocked. Deliveries slow down.',
+            facts:['Reports say up to ~20% of shipments used that route.','If supply slows, fuel often gets more expensive.']
           },
-          lv: {
-            title:'Centrālā banka maina gaidas par likmēm',
-            desc:'Investori pārvērtē aktīvus atkarībā no tā, kur varētu virzīties likmes.',
-            why:['Augstākas likmes = dārgāka aizņemšanās (spiediens uz izaugsmi).','Obligāciju cenas var krist, ja ienesīgumi kāpj.'],
-            lesson:'Likmju gaidas var vienlaikus ietekmēt daudzus aktīvus.'
+          lv:{
+            title:'Bloķēts naftas ceļš',
+            desc:'Svarīgs kuģu ceļš ir bloķēts. Piegādes kavējas.',
+            facts:['Ziņās runā: pa šo ceļu gāja līdz ~20% naftas pārvadājumu.','Ja piegāde bremzē, degviela parasti kļūst dārgāka.']
           }
         },
-        cash: { rateAdd: 0.001, inflAdd: 0.000 },
-        impacts: {
-          stocks:{muAdd:-0.002,sigMul:1.15}, bonds:{muAdd:-0.004,sigMul:1.35},
-          realEstate:{muAdd:-0.003,sigMul:1.20}, crypto:{muAdd:-0.002,sigMul:1.25}
+        cash:{ rateAdd:0.000, inflAdd:0.004 },
+        impacts:{
+          stocks:{muAdd:-0.010,sigMul:1.30}, bonds:{muAdd:-0.006,sigMul:1.25},
+          realEstate:{muAdd:-0.007,sigMul:1.20}, crypto:{muAdd:-0.012,sigMul:1.45}
         },
-        followUps: [
-          { id:'hike',      w:3, teaser:{ en:'Rates rise more than expected', lv:'Likmes kāpj vairāk nekā gaidīts' } },
-          { id:'pause',     w:3, teaser:{ en:'Rates pause (uncertainty stays)', lv:'Likmes pauzē (neskaidrība paliek)' } },
-          { id:'infl_spike',w:2, teaser:{ en:'Inflation surprises higher', lv:'Inflācija pārsteidz augstāk' } }
+        followUps:[
+          { id:'oil_jump', w:3, teaser:{ en:'Oil price jumps', lv:'Naftas cena lec' } },
+          { id:'inflation', w:2, teaser:{ en:'Inflation rises', lv:'Cenas aug ātrāk' } },
+          { id:'rate_hike', w:1, teaser:{ en:'Central bank raises rates', lv:'Centrālā banka ceļ procentus' } }
         ]
       },
 
-      hike: {
-        text: {
-          en: {
-            title:'Rate hike shock',
-            desc:'Borrowing costs jump more than markets expected.',
-            why:['Risky assets often dislike sudden rate shocks.','Existing bonds can drop when yields rise.'],
-            lesson:'“Lower risk” can still lose money when rates change.'
+      oil_jump: {
+        icon:'⛽',
+        text:{
+          en:{
+            title:'Oil price jumps',
+            desc:'Fuel and transport costs rise quickly.',
+            facts:['Higher transport costs can push prices up.','That can lead to inflation news next.']
           },
-          lv: {
-            title:'Likmju kāpuma šoks',
-            desc:'Aizņemšanās kļūst dārgāka vairāk nekā tirgus bija gaidījis.',
-            why:['Riska aktīvi bieži cieš no pēkšniem likmju šokiem.','Esošās obligācijas var krist, ja ienesīgumi kāpj.'],
-            lesson:'Arī “drošāks” var krist, ja mainās likmes.'
+          lv:{
+            title:'Naftas cena lec',
+            desc:'Degviela un transports kļūst dārgāki.',
+            facts:['Dārgāks transports bieži paceļ cenas veikalos.','Pēc tam var nākt inflācijas ziņas.']
           }
         },
-        cash: { rateAdd: 0.002, inflAdd: -0.001 },
-        impacts: {
-          stocks:{muAdd:-0.006,sigMul:1.25}, bonds:{muAdd:-0.010,sigMul:1.35},
-          realEstate:{muAdd:-0.010,sigMul:1.25}, crypto:{muAdd:-0.008,sigMul:1.35}
+        cash:{ rateAdd:0.000, inflAdd:0.006 },
+        impacts:{
+          stocks:{muAdd:-0.010,sigMul:1.25}, bonds:{muAdd:-0.006,sigMul:1.20},
+          realEstate:{muAdd:-0.006,sigMul:1.15}, crypto:{muAdd:-0.012,sigMul:1.45}
         },
-        followUps: [
-          { id:'recession_warn', w:3, teaser:{ en:'Recession risk warnings increase', lv:'Pieaug recesijas riska brīdinājumi' } },
-          { id:'soft',          w:2, teaser:{ en:'Soft-landing hopes grow', lv:'Pieaug “maigās nosēšanās” cerības' } },
-          { id:'risk_off',      w:1, teaser:{ en:'Risk appetite falls', lv:'Riska apetīte krīt' } }
+        followUps:[
+          { id:'inflation', w:3, teaser:{ en:'Inflation rises', lv:'Cenas aug ātrāk' } },
+          { id:'rate_hike', w:2, teaser:{ en:'Rates go up', lv:'Ceļ procentus' } },
+          { id:'calm', w:1, teaser:{ en:'Supply improves', lv:'Piegāde uzlabojas' } }
         ]
       },
 
-      pause: {
-        text: {
-          en: {
-            title:'Rates pause (wait-and-see)',
-            desc:'No big move, but uncertainty remains elevated.',
-            why:['Less shock than a hike, but still unclear direction.','Volatility can stay elevated in uncertainty.'],
-            lesson:'Sometimes the main risk is uncertainty itself.'
+      inflation: {
+        icon:'🧾',
+        text:{
+          en:{
+            title:'Inflation rises',
+            desc:'Prices in shops rise faster than expected.',
+            facts:['Money buys less than before.','Central banks often react by raising rates.']
           },
-          lv: {
-            title:'Likmes pauzē (gaida un vēro)',
-            desc:'Liels lēmums nav pieņemts, bet neskaidrība paliek.',
-            why:['Nav šoka kā likmju kāpumā, bet virziens joprojām miglā.','Neskaidrībā svārstība mēdz turēties augsta.'],
-            lesson:'Dažreiz lielākais risks ir neskaidrība.'
+          lv:{
+            title:'Cenas aug ātrāk',
+            desc:'Cenas veikalā aug straujāk nekā gaidīts.',
+            facts:['Nauda pērk mazāk nekā iepriekš.','Centrālā banka bieži reaģē, ceļot procentus.']
           }
         },
-        cash: { rateAdd: 0.001, inflAdd: 0.000 },
-        impacts: {
-          stocks:{muAdd:0.001,sigMul:1.10}, bonds:{muAdd:0.003,sigMul:1.10},
-          realEstate:{muAdd:0.001,sigMul:1.05}, crypto:{muAdd:0.002,sigMul:1.20}
+        cash:{ rateAdd:0.000, inflAdd:0.010 },
+        impacts:{
+          stocks:{muAdd:-0.008,sigMul:1.20}, bonds:{muAdd:-0.012,sigMul:1.30},
+          realEstate:{muAdd:-0.008,sigMul:1.20}, crypto:{muAdd:-0.006,sigMul:1.35}
         },
-        followUps: [
-          { id:'infl_cool', w:3, teaser:{ en:'Inflation cools unexpectedly', lv:'Inflācija bremzē vairāk nekā gaidīts' } },
-          { id:'infl_spike',w:2, teaser:{ en:'Inflation flares up again', lv:'Inflācija atkal uzlec' } },
-          { id:'calm',      w:1, teaser:{ en:'Volatility fades', lv:'Svārstība mazinās' } }
+        followUps:[
+          { id:'rate_hike', w:3, teaser:{ en:'Rates go up', lv:'Ceļ procentus' } },
+          { id:'calm', w:1, teaser:{ en:'Inflation cools', lv:'Cenas sāk augt lēnāk' } },
+          { id:'slow', w:1, teaser:{ en:'Economy slows', lv:'Ekonomika bremzē' } }
         ]
       },
 
-      infl_spike: {
-        text: {
-          en: {
-            title:'Inflation spike',
-            desc:'Prices rise faster; purchasing power weakens.',
-            why:['Inflation can push rates higher.','Higher inflation adds uncertainty and pressure.'],
-            lesson:'Inflation can hurt if returns don’t keep up.'
+      rate_hike: {
+        icon:'🏛️',
+        text:{
+          en:{
+            title:'Central bank raises rates',
+            desc:'Borrowing becomes more expensive.',
+            facts:['Expensive loans can hurt stocks and property.','Bonds can drop when rates rise fast.']
           },
-          lv: {
-            title:'Inflācija uzlec',
-            desc:'Cenas aug straujāk; pirktspēja vājinās.',
-            why:['Inflācija var spiest likmes uz augšu.','Augsta inflācija palielina neskaidrību un spiedienu.'],
-            lesson:'Inflācija kaitē, ja atdeve netiek līdzi.'
+          lv:{
+            title:'Centrālā banka ceļ procentus',
+            desc:'Aizņemties kļūst dārgāk.',
+            facts:['Dārgi kredīti var spiest uz leju akcijas un īpašumus.','Obligācijas var krist, ja procenti strauji kāpj.']
           }
         },
-        cash: { rateAdd: 0.000, inflAdd: 0.010 },
-        impacts: {
-          stocks:{muAdd:-0.004,sigMul:1.20}, bonds:{muAdd:-0.012,sigMul:1.30},
-          realEstate:{muAdd:-0.008,sigMul:1.20}, crypto:{muAdd:-0.003,sigMul:1.35}
+        cash:{ rateAdd:0.002, inflAdd:-0.001 },
+        impacts:{
+          stocks:{muAdd:-0.012,sigMul:1.25}, bonds:{muAdd:-0.014,sigMul:1.35},
+          realEstate:{muAdd:-0.012,sigMul:1.25}, crypto:{muAdd:-0.014,sigMul:1.45}
         },
-        followUps: [
-          { id:'rates_hint', w:3, teaser:{ en:'Officials signal action', lv:'Amatpersonas signalizē rīcību' } },
-          { id:'hike',       w:2, teaser:{ en:'Rates rise to fight inflation', lv:'Likmes kāpj, lai bremzētu inflāciju' } },
-          { id:'soft',       w:1, teaser:{ en:'Inflation eases without a crash', lv:'Inflācija mazinās bez lielas krīzes' } }
+        followUps:[
+          { id:'slow', w:3, teaser:{ en:'Economy slows', lv:'Ekonomika bremzē' } },
+          { id:'panic', w:2, teaser:{ en:'Market panic', lv:'Tirgū panika' } },
+          { id:'calm', w:1, teaser:{ en:'Markets adjust', lv:'Tirgus pierod' } }
         ]
       },
 
-      infl_cool: {
-        text: {
-          en: {
-            title:'Inflation cools',
-            desc:'Price pressure eases more than expected.',
-            why:['Less pressure for very high rates.','Lower inflation can calm markets.'],
-            lesson:'Markets move on changing expectations.'
+      slow: {
+        icon:'📉',
+        text:{
+          en:{
+            title:'Economy slows',
+            desc:'People spend less. Companies grow slower.',
+            facts:['Lower growth can hurt stocks.','Safer assets can hold up better.']
           },
-          lv: {
-            title:'Inflācija bremzē',
-            desc:'Cenu spiediens mazinās vairāk nekā gaidīts.',
-            why:['Mazāks spiediens agresīvi celt likmes.','Zemāka inflācija var nomierināt tirgu.'],
-            lesson:'Tirgus bieži kustas uz gaidu maiņu.'
+          lv:{
+            title:'Ekonomika bremzē',
+            desc:'Cilvēki tērē mazāk. Uzņēmumiem iet lēnāk.',
+            facts:['Bremzēšanās bieži spiež akcijas uz leju.','Drošāki aktīvi var turēties labāk.']
           }
         },
-        cash: { rateAdd: 0.000, inflAdd: -0.001 },
-        impacts: {
-          stocks:{muAdd:0.003,sigMul:1.05}, bonds:{muAdd:0.006,sigMul:1.10},
-          realEstate:{muAdd:0.003,sigMul:1.05}, crypto:{muAdd:0.004,sigMul:1.15}
+        cash:{ rateAdd:0.001, inflAdd:-0.001 },
+        impacts:{
+          stocks:{muAdd:-0.016,sigMul:1.35}, bonds:{muAdd:0.006,sigMul:1.20},
+          realEstate:{muAdd:-0.010,sigMul:1.25}, crypto:{muAdd:-0.020,sigMul:1.60}
         },
-        followUps: [
-          { id:'soft',     w:3, teaser:{ en:'Soft landing looks likely', lv:'“Maigā nosēšanās” šķiet ticamāka' } },
-          { id:'earnings', w:2, teaser:{ en:'Earnings become the focus', lv:'Fokusā atkal finanšu rezultāti' } },
-          { id:'calm',     w:1, teaser:{ en:'Markets calm down', lv:'Tirgus nomierinās' } }
+        followUps:[
+          { id:'panic', w:2, teaser:{ en:'Panic selling', lv:'Panikā pārdod' } },
+          { id:'help', w:2, teaser:{ en:'Government support', lv:'Valsts dod atbalstu' } },
+          { id:'rate_cut', w:2, teaser:{ en:'Rates go down', lv:'Samazina procentus' } }
         ]
       },
 
-      recession_warn: {
-        text: {
-          en: {
-            title:'Recession warning lights up',
-            desc:'Confidence drops; fear of slowdown rises.',
-            why:['In fear, investors sell risky assets first.','“Safe” assets may hold up better.'],
-            lesson:'Diversification helps, but doesn’t remove all pain.'
+      panic: {
+        icon:'😰',
+        text:{
+          en:{
+            title:'Market panic',
+            desc:'A lot of people sell quickly. Big swings.',
+            facts:['In panic, movements are extreme.','Riskier assets often fall the most.']
           },
-          lv: {
-            title:'Iedegas recesijas brīdinājums',
-            desc:'Pārliecība krīt; bailes par bremzēšanos pieaug.',
-            why:['Bailēs vispirms pārdod riskantos aktīvus.','“Drošāki” var turēties labāk.'],
-            lesson:'Diversifikācija palīdz, bet brīnumus nedara.'
+          lv:{
+            title:'Tirgū panika',
+            desc:'Daudzi pārdod ļoti ātri. Svārstības ir lielas.',
+            facts:['Panikā kustības ir straujas.','Riskantākie aktīvi bieži krīt visvairāk.']
           }
         },
-        cash: { rateAdd: 0.001, inflAdd: -0.002 },
-        impacts: {
-          stocks:{muAdd:-0.015,sigMul:1.40}, bonds:{muAdd:0.006,sigMul:1.20},
-          realEstate:{muAdd:-0.010,sigMul:1.30}, crypto:{muAdd:-0.020,sigMul:1.60}
+        cash:{ rateAdd:0.001, inflAdd:-0.002 },
+        impacts:{
+          stocks:{muAdd:-0.022,sigMul:1.55}, bonds:{muAdd:0.012,sigMul:1.25},
+          realEstate:{muAdd:-0.016,sigMul:1.35}, crypto:{muAdd:-0.032,sigMul:1.75}
         },
-        followUps: [
-          { id:'recession', w:3, teaser:{ en:'Recession hits (risk-off)', lv:'Iestājas recesija (riska apetīte krīt)' } },
-          { id:'support',   w:2, teaser:{ en:'Policy support is announced', lv:'Tiek paziņots atbalsts ekonomikai' } },
-          { id:'soft',      w:1, teaser:{ en:'Slowdown is contained', lv:'Bremzēšanos izdodas ierobežot' } }
+        followUps:[
+          { id:'help', w:3, teaser:{ en:'Support arrives', lv:'Atbalsts ienāk' } },
+          { id:'rate_cut', w:2, teaser:{ en:'Rate cuts', lv:'Samazina procentus' } },
+          { id:'calm', w:1, teaser:{ en:'Selling slows', lv:'Pārdošana rimst' } }
         ]
       },
 
-      recession: {
-        text: {
-          en: {
-            title:'Recession: risk-off dominates',
-            desc:'Investors seek safety; risk appetite collapses.',
-            why:['Risky assets can fall together.','Recovery often starts before news feels good.'],
-            lesson:'Drawdowns are why time horizon matters.'
+      rate_cut: {
+        icon:'🏛️',
+        text:{
+          en:{
+            title:'Central bank cuts rates',
+            desc:'Loans become cheaper.',
+            facts:['Cheaper loans can help stocks and property.','Often happens after bad months.']
           },
-          lv: {
-            title:'Recesija: dominē piesardzība',
-            desc:'Investori meklē drošību; riska apetīte sabrūk.',
-            why:['Riska aktīvi mēdz krist kopā.','Atkopšanās nereti sākas pirms “labām ziņām”.'],
-            lesson:'Kritumi ir iemesls, kāpēc svarīgs ir laika horizonts.'
+          lv:{
+            title:'Centrālā banka samazina procentus',
+            desc:'Aizņemties kļūst lētāk.',
+            facts:['Lētāki kredīti var palīdzēt akcijām un īpašumiem.','Bieži tas notiek pēc sliktām ziņām.']
           }
         },
-        cash: { rateAdd: 0.001, inflAdd: -0.003 },
-        impacts: {
-          stocks:{muAdd:-0.020,sigMul:1.50}, bonds:{muAdd:0.010,sigMul:1.25},
-          realEstate:{muAdd:-0.015,sigMul:1.35}, crypto:{muAdd:-0.030,sigMul:1.70}
+        cash:{ rateAdd:-0.001, inflAdd:0.002 },
+        impacts:{
+          stocks:{muAdd:0.012,sigMul:1.25}, bonds:{muAdd:0.010,sigMul:1.10},
+          realEstate:{muAdd:0.010,sigMul:1.20}, crypto:{muAdd:0.014,sigMul:1.45}
         },
-        followUps: [
-          { id:'support', w:3, teaser:{ en:'Stimulus / cuts arrive', lv:'Ienāk stimulēšana / likmju samazinājumi' } },
-          { id:'calm',    w:1, teaser:{ en:'Markets adapt', lv:'Tirgus pielāgojas' } },
-          { id:'risk_on', w:1, teaser:{ en:'Bargain hunters return', lv:'Atgriežas “lētu cenu” pircēji' } }
+        followUps:[
+          { id:'good', w:2, teaser:{ en:'Better mood', lv:'Noskaņojums uzlabojas' } },
+          { id:'calm', w:2, teaser:{ en:'Calmer month', lv:'Mierīgāk' } },
+          { id:'inflation', w:1, teaser:{ en:'Inflation worries', lv:'Cenas aug ātrāk' } }
         ]
       },
 
-      support: {
-        text: {
-          en: {
-            title:'Policy support arrives',
-            desc:'Authorities try to stabilize the economy and markets.',
-            why:['Support can boost confidence quickly.','But it does not remove risk entirely.'],
-            lesson:'Policy can change the environment fast.'
+      help: {
+        icon:'🤝',
+        text:{
+          en:{
+            title:'Government support',
+            desc:'Support for people and companies is announced.',
+            facts:['Support can calm fear.','But problems do not disappear overnight.']
           },
-          lv: {
-            title:'Ienāk atbalsta pasākumi',
-            desc:'Iestādes cenšas stabilizēt ekonomiku un tirgu.',
-            why:['Atbalsts var ātri pacelt pārliecību.','Bet risks pilnībā nepazūd.'],
-            lesson:'Politika var ātri mainīt vidi.'
+          lv:{
+            title:'Valsts dod atbalstu',
+            desc:'Paziņo atbalstu cilvēkiem un uzņēmumiem.',
+            facts:['Atbalsts var nomierināt bailes.','Bet problēmas nepazūd vienā dienā.']
           }
         },
-        cash: { rateAdd: -0.001, inflAdd: 0.002 },
-        impacts: {
-          stocks:{muAdd:0.010,sigMul:1.35}, bonds:{muAdd:0.010,sigMul:1.15},
-          realEstate:{muAdd:0.006,sigMul:1.20}, crypto:{muAdd:0.012,sigMul:1.45}
+        cash:{ rateAdd:0.000, inflAdd:0.002 },
+        impacts:{
+          stocks:{muAdd:0.012,sigMul:1.35}, bonds:{muAdd:0.006,sigMul:1.15},
+          realEstate:{muAdd:0.008,sigMul:1.25}, crypto:{muAdd:0.016,sigMul:1.55}
         },
-        followUps: [
-          { id:'risk_on',   w:3, teaser:{ en:'Risk appetite returns', lv:'Riska apetīte atgriežas' } },
-          { id:'infl_spike',w:1, teaser:{ en:'Inflation fears return', lv:'Atgriežas inflācijas bailes' } },
-          { id:'calm',      w:1, teaser:{ en:'Slow stabilization', lv:'Pakāpeniska stabilizācija' } }
+        followUps:[
+          { id:'good', w:2, teaser:{ en:'Markets bounce', lv:'Tirgus atlec' } },
+          { id:'calm', w:2, teaser:{ en:'Stabilizes', lv:'Kļūst mierīgāk' } },
+          { id:'inflation', w:1, teaser:{ en:'Price worries', lv:'Cenas aug ātrāk' } }
         ]
       },
 
-      risk_on: {
-        text: {
-          en: {
-            title:'Risk appetite rises',
-            desc:'Investors chase returns; volatile assets can surge.',
-            why:['Optimism fuels demand for risky assets.','But reversals can be sudden.'],
-            lesson:'Momentum feels like skill until it stops.'
+      good: {
+        icon:'✅',
+        text:{
+          en:{
+            title:'Better economy news',
+            desc:'Data looks better. People feel more confident.',
+            facts:['More confidence can lift stocks.','Volatile assets can jump more.']
           },
-          lv: {
-            title:'Riska apetīte pieaug',
-            desc:'Investori dzenas pēc atdeves; svārstīgi aktīvi var uzšaut.',
-            why:['Optimisms palielina pieprasījumu pēc riska aktīviem.','Bet apgrieziens var būt pēkšņs.'],
-            lesson:'Inerce šķiet kā prasme… līdz brīdim, kad tā apstājas.'
+          lv:{
+            title:'Labākas ziņas par ekonomiku',
+            desc:'Skaitļi izskatās labāk. Cilvēki jūtas drošāk.',
+            facts:['Kad ir cerība, akcijas bieži aug.','Svārstīgi aktīvi var kāpt vēl vairāk.']
           }
         },
-        cash: { rateAdd: 0.000, inflAdd: 0.000 },
-        impacts: {
-          stocks:{muAdd:0.010,sigMul:1.25}, bonds:{muAdd:-0.003,sigMul:1.10},
-          realEstate:{muAdd:0.004,sigMul:1.20}, crypto:{muAdd:0.020,sigMul:1.60}
+        cash:{ rateAdd:0.000, inflAdd:0.000 },
+        impacts:{
+          stocks:{muAdd:0.012,sigMul:1.20}, bonds:{muAdd:-0.002,sigMul:1.05},
+          realEstate:{muAdd:0.008,sigMul:1.15}, crypto:{muAdd:0.018,sigMul:1.55}
         },
-        followUps: [
-          { id:'risk_off', w:2, teaser:{ en:'Mood flips (risk appetite falls)', lv:'Noskaņojums mainās (risku negrib)' } },
-          { id:'tech_hype',w:2, teaser:{ en:'Speculation concentrates in hype', lv:'Spekulācija koncentrējas ažiotāžā' } },
-          { id:'earnings', w:1, teaser:{ en:'Earnings reality check', lv:'Rezultāti ienes realitātes pārbaudi' } }
+        followUps:[
+          { id:'calm', w:3, teaser:{ en:'Calm month', lv:'Mierīgs mēnesis' } },
+          { id:'inflation', w:1, teaser:{ en:'Prices rise faster', lv:'Cenas aug ātrāk' } },
+          { id:'hack', w:1, teaser:{ en:'Crypto shock', lv:'Kripto šoks' } }
         ]
       },
 
-      risk_off: {
-        text: {
-          en: {
-            title:'Risk appetite falls',
-            desc:'Fear rises; investors sell volatile assets and prefer stability.',
-            why:['In fear, cash and safer assets feel attractive.','High-volatility assets often drop hardest.'],
-            lesson:'The urge to act is strongest at the worst emotional time.'
+      hack: {
+        icon:'🚨',
+        text:{
+          en:{
+            title:'Major crypto hack',
+            desc:'A big platform is hacked. Confidence drops.',
+            facts:['When trust falls, crypto often falls too.','Fear can spill into other risky assets.']
           },
-          lv: {
-            title:'Riska apetīte krīt',
-            desc:'Bailes pieaug; svārstīgus aktīvus pārdod, meklē stabilitāti.',
-            why:['Bailēs nauda un drošāki aktīvi šķiet pievilcīgāki.','Svārstīgākie aktīvi bieži cieš visvairāk.'],
-            lesson:'Vēlme “kaut ko darīt” parasti ir visspēcīgākā sliktākajā brīdī.'
+          lv:{
+            title:'Liels kripto uzlauzums',
+            desc:'Uzlauž lielu platformu. Uzticība krīt.',
+            facts:['Kad uzticība krīt, kripto bieži krīt.','Bailes var aizķert arī citus riskantus aktīvus.']
           }
         },
-        cash: { rateAdd: 0.000, inflAdd: 0.000 },
-        impacts: {
-          stocks:{muAdd:-0.010,sigMul:1.35}, bonds:{muAdd:0.004,sigMul:1.15},
-          realEstate:{muAdd:-0.006,sigMul:1.25}, crypto:{muAdd:-0.020,sigMul:1.70}
+        cash:{ rateAdd:0.000, inflAdd:0.000 },
+        impacts:{
+          stocks:{muAdd:-0.006,sigMul:1.25}, bonds:{muAdd:0.003,sigMul:1.10},
+          realEstate:{muAdd:-0.004,sigMul:1.15}, crypto:{muAdd:-0.035,sigMul:1.85}
         },
-        followUps: [
-          { id:'calm',    w:2, teaser:{ en:'Fear fades, markets stabilize', lv:'Bailes mazinās, tirgus stabilizējas' } },
-          { id:'support', w:1, teaser:{ en:'Authorities respond', lv:'Iestādes reaģē' } },
-          { id:'recession_warn', w:1, teaser:{ en:'Slowdown fears intensify', lv:'Bremzēšanās bailes pieaug' } }
-        ]
-      },
-
-      tech_hype: {
-        text: {
-          en: {
-            title:'Tech hype wave',
-            desc:'A shiny new narrative attracts speculators.',
-            why:['Hype increases demand for riskier assets.','Big moves can reverse quickly.'],
-            lesson:'If something “only goes up,” risk is being ignored.'
-          },
-          lv: {
-            title:'Tehnoloģiju ažiotāža',
-            desc:'Spilgta jauna tēma pievelk spekulantus.',
-            why:['Ažiotāža palielina pieprasījumu pēc riska aktīviem.','Lieli kāpumi var ātri apgriezties.'],
-            lesson:'Ja “tikai aug”, parasti risks tiek ignorēts.'
-          }
-        },
-        cash: { rateAdd: 0.000, inflAdd: 0.000 },
-        impacts: {
-          stocks:{muAdd:0.010,sigMul:1.30}, bonds:{muAdd:-0.002,sigMul:1.05},
-          realEstate:{muAdd:0.000,sigMul:1.05}, crypto:{muAdd:0.018,sigMul:1.55}
-        },
-        followUps: [
-          { id:'bubble',  w:2, teaser:{ en:'Bubble warnings appear', lv:'Parādās burbuļa brīdinājumi' } },
-          { id:'risk_on', w:2, teaser:{ en:'Speculation accelerates', lv:'Spekulācija paātrinās' } },
-          { id:'risk_off',w:1, teaser:{ en:'A sudden correction hits', lv:'Pēkšņa korekcija' } }
-        ]
-      },
-
-      bubble: {
-        text: {
-          en: {
-            title:'Bubble warning',
-            desc:'Prices look stretched; volatility rises.',
-            why:['High prices imply higher crash risk.','Fear can spread quickly when confidence cracks.'],
-            lesson:'Higher upside often comes with crash risk.'
-          },
-          lv: {
-            title:'Burbuļa brīdinājums',
-            desc:'Cenas šķiet pārspīlētas; svārstība pieaug.',
-            why:['Augstas cenas nozīmē lielāku krituma risku.','Ja pārliecība plaisā, bailes izplatās ātri.'],
-            lesson:'Lielāks “upsides” bieži nāk ar krituma risku.'
-          }
-        },
-        cash: { rateAdd: 0.000, inflAdd: 0.000 },
-        impacts: {
-          stocks:{muAdd:-0.004,sigMul:1.45}, bonds:{muAdd:0.001,sigMul:1.10},
-          realEstate:{muAdd:-0.002,sigMul:1.20}, crypto:{muAdd:-0.010,sigMul:1.70}
-        },
-        followUps: [
-          { id:'risk_off', w:3, teaser:{ en:'Correction / crash', lv:'Korekcija / kritums' } },
-          { id:'risk_on',  w:1, teaser:{ en:'Bubble grows anyway', lv:'Burbuļi aug arī tālāk' } },
-          { id:'calm',     w:1, teaser:{ en:'Prices consolidate', lv:'Cenas konsolidējas' } }
-        ]
-      },
-
-      energy: {
-        text: {
-          en: {
-            title:'Energy shock',
-            desc:'Energy and transport costs jump; inflation fears rise.',
-            why:['Higher costs can squeeze profits.','Inflation fears can pressure bonds and growth assets.'],
-            lesson:'Macro shocks can hit many markets at once.'
-          },
-          lv: {
-            title:'Enerģijas cenu šoks',
-            desc:'Enerģijas un pārvadājumu izmaksas strauji kāpj; inflācijas bailes pieaug.',
-            why:['Augstākas izmaksas var nospiest peļņu.','Inflācijas bailes spiež uz obligācijām un izaugsmes aktīviem.'],
-            lesson:'Makro šoki var trāpīt daudzos tirgos vienlaikus.'
-          }
-        },
-        cash: { rateAdd: 0.000, inflAdd: 0.006 },
-        impacts: {
-          stocks:{muAdd:-0.008,sigMul:1.25}, bonds:{muAdd:-0.006,sigMul:1.25},
-          realEstate:{muAdd:-0.006,sigMul:1.20}, crypto:{muAdd:-0.010,sigMul:1.45}
-        },
-        followUps: [
-          { id:'infl_spike', w:3, teaser:{ en:'Inflation fears surge', lv:'Inflācijas bailes pastiprinās' } },
-          { id:'risk_off',   w:1, teaser:{ en:'Risk appetite falls', lv:'Riska apetīte krīt' } },
-          { id:'calm',       w:1, teaser:{ en:'Shock fades', lv:'Šoks mazinās' } }
-        ]
-      },
-
-      soft: {
-        text: {
-          en: {
-            title:'Soft landing hopes',
-            desc:'The economy slows without crashing. Markets try to stabilize.',
-            why:['Less extreme fear than in recession.','But uncertainty is not gone.'],
-            lesson:'Stability often returns in steps.'
-          },
-          lv: {
-            title:'“Maigās nosēšanās” cerības',
-            desc:'Ekonomika bremzē bez sabrukuma. Tirgus mēģina stabilizēties.',
-            why:['Mazāk ekstrēmu baiļu nekā recesijā.','Bet neskaidrība nepazūd uzreiz.'],
-            lesson:'Stabilitāte parasti atgriežas pakāpeniski.'
-          }
-        },
-        cash: { rateAdd: 0.000, inflAdd: 0.000 },
-        impacts: {
-          stocks:{muAdd:0.004,sigMul:1.20}, bonds:{muAdd:0.003,sigMul:1.10},
-          realEstate:{muAdd:0.003,sigMul:1.10}, crypto:{muAdd:0.006,sigMul:1.35}
-        },
-        followUps: [
-          { id:'calm', w:2, teaser:{ en:'Markets calm down', lv:'Tirgus nomierinās' } },
-          { id:'earnings', w:2, teaser:{ en:'Focus shifts back to results', lv:'Fokusā atkal rezultāti' } },
-          { id:'rates_hint', w:1, teaser:{ en:'Rates return to spotlight', lv:'Likmes atkal fokusā' } }
+        followUps:[
+          { id:'panic', w:2, teaser:{ en:'More selling', lv:'Vairāk pārdod' } },
+          { id:'calm', w:2, teaser:{ en:'Moves on', lv:'Tirgus iet tālāk' } },
+          { id:'good', w:1, teaser:{ en:'Confidence returns', lv:'Uzticība atgriežas' } }
         ]
       }
     };
 
-    const START_EVENTS = ['calm','rates_hint','tech_hype','energy','earnings'];
+    const START_EVENTS = ['calm','good','calm','oil_route','inflation'];
 
-    function el(id){ return document.getElementById(id); }
-    function clamp(x,a,b){ return Math.min(b, Math.max(a, x)); }
-    function num(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
+    // --- helpers
+    const el = (id)=>document.getElementById(id);
+    const clamp = (x,a,b)=>Math.min(b, Math.max(a, x));
+    const num = (v)=>{ const n=Number(v); return Number.isFinite(n)?n:0; };
 
-    function randN(){ // Box–Muller
+    function randN(){
       let u=0,v=0;
       while(u===0) u=Math.random();
       while(v===0) v=Math.random();
       return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
     }
-
     function chooseWeighted(arr){
       const total = arr.reduce((s,x)=>s+x.w,0);
       let r = Math.random()*total;
       for(const x of arr){ r -= x.w; if(r<=0) return x.id; }
       return arr[arr.length-1].id;
     }
-
-    function diffMult(s){
-      if(s.difficulty==='easy') return 0.85;
-      if(s.difficulty==='hard') return 1.18;
+    function diffMult(){
+      if(settings.difficulty==='easy') return 0.85;
+      if(settings.difficulty==='hard') return 1.18;
       return 1.0;
     }
 
-    function applyI18n(){
-      const T = L();
-      document.documentElement.lang = settings.lang === 'lv' ? 'lv' : 'en';
-      document.title = T.appName;
+    // --- sound (simple oscillator)
+    let audioCtx = null;
+    function beep(type){
+      if(!settings.soundEnabled) return;
+      try{
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
 
-      el('txtAppName').textContent = T.appName;
-      el('btnHow').textContent = T.btnHow;
-      el('btnSettings').textContent = T.btnSettings;
-      el('btnRestart').textContent = T.btnRestart;
+        const now = audioCtx.currentTime;
+        const freq =
+          type==='click' ? 520 :
+          type==='next'  ? 740 :
+          type==='error' ? 180 :
+          type==='win'   ? 880 : 600;
 
-      el('labMonth').textContent = T.labMonth;
-      el('labWorth').textContent = T.labWorth;
-      el('labGoal').textContent = T.labGoal;
-      el('labCash').textContent = T.labCash;
+        o.frequency.setValueAtTime(freq, now);
 
-      el('labNewsHeading').textContent = T.labNewsHeading;
-      el('labWhy').textContent = T.labWhy;
-      el('labNext').textContent = T.labNext;
+        // quick envelope to avoid clicks
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.08, now + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.10);
 
-      el('labAllocHeading').textContent = T.labAllocHeading;
-      el('labAllocHelp').textContent = T.labAllocHelp;
-      el('thAsset').textContent = T.thAsset;
-      el('thRisk').textContent = T.thRisk;
-      el('thCurrent').textContent = T.thCurrent;
-      el('thTarget').textContent = T.thTarget;
-
-      el('pillAvail').firstChild.textContent = ` ${T.pillAvail} `;
-      el('pillFees').firstChild.textContent = ` ${T.pillFees} `;
-      el('pillCash').firstChild.textContent = ` ${T.pillCash} `;
-      el('btnEnd').textContent = T.btnEnd;
-
-      el('labHistory').textContent = T.labHistory;
-
-      // How modal
-      el('howTitle').textContent = T.howTitle;
-      el('howIntro').textContent = T.howIntro(settings);
-      const ul = el('howList');
-      ul.innerHTML = '';
-      T.howSteps.forEach(s => {
-        const li = document.createElement('li');
-        li.textContent = s;
-        ul.appendChild(li);
-      });
-      el('howNote').textContent = T.howNote;
-
-      // Settings modal
-      el('setTitle').textContent = T.setTitle;
-      el('setLabStart').textContent = T.setLabStart;
-      el('setLabGoal').textContent = T.setLabGoal;
-      el('setLabMonths').textContent = T.setLabMonths;
-      el('setLabFees').textContent = T.setLabFees;
-      el('setLabInfl').textContent = T.setLabInfl;
-      el('setLabDiff').textContent = T.setLabDiff;
-      el('optEasy').textContent = T.optEasy;
-      el('optNormal').textContent = T.optNormal;
-      el('optHard').textContent = T.optHard;
-      el('setLabLang').textContent = T.setLabLang;
-      el('setApply').textContent = T.setApply;
-      el('setNote').textContent = T.setNote;
-
-      // refresh formatters when language changes
-      fmt = makeFormatters();
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start(now);
+        o.stop(now + 0.12);
+      }catch{}
     }
 
-    function newRun(){
-      const startEvent = START_EVENTS[Math.floor(Math.random()*START_EVENTS.length)];
-      state = {
-        month: 1,
-        eventId: startEvent,
-        cash: settings.start,
-        h: { stocks:0, bonds:0, realEstate:0, crypto:0 },
-        history: []
-      };
-      render();
+    // --- state
+    let state = null;
+    // pending month advance (to avoid “news mismatch” behind the result modal)
+    let pendingAdvance = null;
+
+    function riskLabel(a){
+      const r=T().risk;
+      if(a.riskClass==='low') return r.low;
+      if(a.riskClass==='high') return r.high;
+      return r.med;
+    }
+
+    function evText(id){
+      const e = EVENTS[id];
+      return (e.text[settings.lang] || e.text.en);
+    }
+
+    // --- i18n apply
+    function applyI18n(){
+      const t = T();
+      document.documentElement.lang = settings.lang==='lv' ? 'lv' : 'en';
+      document.title = t.appName;
+      el('txtAppName').textContent = t.appName;
+
+      el('newsBadge').textContent = t.newsBadge;
+      el('labFacts').textContent = t.facts;
+      el('labNext').textContent = t.next;
+
+      el('btnHow').textContent = t.btnHow;
+      el('btnSettings').textContent = t.btnSettings;
+      el('btnRestart').textContent = t.btnRestart;
+      el('btnEnd').textContent = t.btnNextMonth;
+
+      el('labMonth').textContent = t.labMonth;
+      el('labWorth').textContent = t.labWorth;
+      el('labGoal').textContent = t.labGoal;
+      el('labCash').textContent = t.labCash;
+
+      el('labAllocHeading').textContent = t.allocHeading;
+      el('labAllocHelp').textContent = t.allocHelp;
+
+      el('thAsset').textContent = t.thAsset;
+      el('thRisk').textContent = t.thRisk;
+      el('thCurrent').textContent = t.thCurrent;
+      el('thTarget').textContent = t.thTarget;
+
+      el('pillAvail').firstChild.textContent = ` ${t.pillAvail} `;
+      el('pillFees').firstChild.textContent = ` ${t.pillFees} `;
+      el('pillCash').firstChild.textContent = ` ${t.pillCash} `;
+
+      el('labHistory').textContent = t.history;
+
+      // settings modal labels
+      el('setTitle').textContent = t.setTitle;
+      el('setLabStart').textContent = t.setStart;
+      el('setLabGoal').textContent = t.setGoal;
+      el('setLabMonths').textContent = t.setMonths;
+      el('setLabFees').textContent = t.setFees;
+      el('setLabInfl').textContent = t.setInfl;
+      el('setLabSound').textContent = t.setSound;
+      el('setLabDiff').textContent = t.setDiff;
+      el('optEasy').textContent = t.diffEasy;
+      el('optNormal').textContent = t.diffNormal;
+      el('optHard').textContent = t.diffHard;
+      el('setLabLang').textContent = t.setLang;
+      el('setApply').textContent = t.setApply;
+
+      // refresh number formatting after language switch
+      fmt = makeFormatters();
     }
 
     function worth(){
       return state.cash + Object.values(state.h).reduce((s,v)=>s+v,0);
-    }
-
-    function riskLabel(a){
-      const T = L();
-      if(a.riskClass==='low') return T.risk.low;
-      if(a.riskClass==='high') return T.risk.high;
-      return T.risk.med;
     }
 
     function buildAssetRows(){
@@ -1110,7 +1067,7 @@
         ib.className = 'info';
         ib.type = 'button';
         ib.textContent = 'i';
-        ib.addEventListener('click', ()=>showAssetInfo(a));
+        ib.addEventListener('click', ()=>{ beep('click'); showAssetInfo(a); });
         name.appendChild(ib);
         td1.appendChild(name);
 
@@ -1137,32 +1094,29 @@
       });
     }
 
-    function evText(eventId){
-      const ev = EVENTS[eventId];
-      return ev.text[settings.lang] || ev.text.en;
-    }
-
     function renderNews(){
-      const ev = EVENTS[state.eventId];
+      const e = EVENTS[state.eventId];
       const t = evText(state.eventId);
 
-      el('evTitle').textContent = t.title;
+      el('evTitle').textContent = `${e.icon} ${t.title}`;
       el('evDesc').textContent = t.desc;
 
-      const why = el('evWhy');
-      why.innerHTML = '';
-      (t.why || []).forEach(s => {
+      const facts = el('evFacts');
+      facts.innerHTML = '';
+      (t.facts || []).slice(0,2).forEach(f => {
         const li = document.createElement('li');
-        li.textContent = s;
-        why.appendChild(li);
+        li.textContent = f;
+        facts.appendChild(li);
       });
 
-      const ul = el('evNext');
-      ul.innerHTML = '';
-      ev.followUps.forEach(f => {
+      const next = el('evNext');
+      next.innerHTML = '';
+      e.followUps.forEach(f => {
         const li = document.createElement('li');
-        li.textContent = (f.teaser && (f.teaser[settings.lang] || f.teaser.en)) || '';
-        ul.appendChild(li);
+        const nxt = EVENTS[f.id];
+        const teaser = (f.teaser && (f.teaser[settings.lang] || f.teaser.en)) || '';
+        li.textContent = `${nxt.icon} ${teaser}`;
+        next.appendChild(li);
       });
     }
 
@@ -1182,9 +1136,7 @@
 
     function readTargets(){
       const t = {};
-      ASSETS.forEach(a => {
-        t[a.id] = clamp(num(el(`tar-${a.id}`).value), 0, 1e12);
-      });
+      ASSETS.forEach(a => t[a.id] = clamp(num(el(`tar-${a.id}`).value), 0, 1e12));
       return t;
     }
 
@@ -1210,9 +1162,10 @@
       if(cashAfter < -0.01){
         err.hidden = false;
         err.textContent = settings.lang === 'lv'
-          ? 'Mērķa sadalījums pārsniedz pieejamo (ieskaitot komisijas). Samazini summas.'
-          : 'Your targets exceed what you can afford (after fees). Reduce allocations.';
+          ? 'Tu ievadīji par daudz. Samazini summas.'
+          : 'You entered too much. Reduce amounts.';
         el('btnEnd').disabled = true;
+        beep('error');
       } else {
         err.hidden = true;
         err.textContent = '';
@@ -1225,15 +1178,169 @@
       const ev = EVENTS[eventId];
       const imp = ev.impacts[assetId] || { muAdd:0, sigMul:1 };
       const mu = a.baseMu + imp.muAdd;
-      const sigma = a.baseSigma * imp.sigMul * diffMult(settings);
+      const sigma = a.baseSigma * imp.sigMul * diffMult();
       const raw = mu + randN()*sigma;
       return clamp(raw, a.clamp[0], a.clamp[1]);
     }
 
+    // --- modals
     function openModal(id){ el(id).hidden = false; }
     function closeModal(id){ el(id).hidden = true; }
 
+    function fillHowModal(){
+      const t = T();
+      el('howTitle').textContent = t.howTitle;
+      el('howIntro').textContent = t.howIntro(settings);
+
+      const ul = el('howList');
+      ul.innerHTML = '';
+      t.howSteps.forEach(s=>{
+        const li = document.createElement('li');
+        li.textContent = s;
+        ul.appendChild(li);
+      });
+      el('howNote').textContent = t.howNote;
+    }
+
+    function showAssetInfo(a){
+      const title = `${a.icon} ${a.name[settings.lang] || a.name.en}`;
+      el('assetTitle').textContent = title;
+      const info = a.info[settings.lang] || a.info.en;
+
+      el('assetBodyText').innerHTML = `
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="label">${settings.lang==='lv'?'Risks':'Risk'}</div><div class="value">${riskLabel(a)}</div></div>
+          <div class="kpi"><div class="label">${settings.lang==='lv'?'Svārstība (spēlē)':'Volatility (game)'}</div><div class="value">≈ ${(a.baseSigma*100).toFixed(1)}%</div></div>
+        </div>
+        <p class="small"><strong>${settings.lang==='lv'?'Kas tas ir':'What it is'}:</strong> ${info.what}</p>
+        <p class="small"><strong>${settings.lang==='lv'?'Risks':'Risk'}:</strong> ${info.risk}</p>
+        <p class="small"><strong>${settings.lang==='lv'?'Kā tas strādā spēlē':'How it works here'}:</strong> ${info.model}</p>
+      `;
+      openModal('modalAsset');
+    }
+
+    function renderHistory(){
+      const ol = el('history');
+      ol.innerHTML = '';
+      if(state.history.length===0){
+        const li=document.createElement('li');
+        li.textContent = settings.lang==='lv' ? 'Vēl nav nospēlēts neviens mēnesis.' : 'No months played yet.';
+        ol.appendChild(li);
+        return;
+      }
+      [...state.history].reverse().forEach(h=>{
+        const li=document.createElement('li');
+        const e = EVENTS[h.eventId];
+        const tt = evText(h.eventId);
+        const d = h.totalAfter - h.totalBefore;
+        li.innerHTML = `${e.icon} <strong>${tt.title}</strong> — ${fmt.c0.format(h.totalAfter)} <span class="${d>=0?'good':'bad'}">(${d>=0?'+':''}${fmt.c0.format(d)})</span>`;
+        ol.appendChild(li);
+      });
+    }
+
+    function showResult(rec, ended, won){
+      const t = T();
+      const e = EVENTS[rec.eventId];
+      const tt = evText(rec.eventId);
+
+      const delta = rec.totalAfter - rec.totalBefore;
+      const deltaCls = delta>=0 ? 'good' : 'bad';
+      const sign = delta>=0 ? '+' : '';
+
+      const facts = (tt.facts || []).slice(0,2).map(s=>`<li>${s}</li>`).join('');
+
+      // Build table rows (assets)
+      const rows = ASSETS.map(a=>{
+        const start = rec.allocations[a.id];
+        const r = rec.returns[a.id];
+        const result = start * (1 + r);
+        const eur = result - start;
+        const rCls = r>=0 ? 'good' : 'bad';
+        const eurCls = eur>=0 ? 'good' : 'bad';
+
+        return `<tr>
+          <td>${a.icon} ${a.name[settings.lang] || a.name.en}</td>
+          <td>${fmt.c0.format(start)}</td>
+          <td class="${rCls}">${fmt.pct.format(r)}</td>
+          <td class="${eurCls}">${(eur>=0?'+':'')}${fmt.c0.format(eur)}</td>
+          <td>${fmt.c0.format(result)}</td>
+        </tr>`;
+      }).join('');
+
+      el('resTitle').textContent = t.resTitle(ended);
+
+      el('resBody').innerHTML = `
+        <div class="kpis">
+          <div class="kpi"><div class="label">${t.resMonth}</div><div class="value">${rec.month}</div></div>
+          <div class="kpi"><div class="label">${t.resTotal}</div><div class="value">${fmt.c0.format(rec.totalAfter)}</div></div>
+          <div class="kpi"><div class="label">${t.resChange}</div><div class="value ${deltaCls}">${sign}${fmt.c0.format(delta)}</div></div>
+        </div>
+
+        <h3>${t.resEvent}</h3>
+        <p class="small"><strong>${e.icon} ${tt.title}</strong> — ${tt.desc}</p>
+
+        <h3>${t.resFacts}</h3>
+        <ul class="small">${facts}</ul>
+
+        <h3>${t.resTable}</h3>
+        <div style="overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>${t.colAsset}</th>
+                <th>${t.colStart}</th>
+                <th>${t.colPct}</th>
+                <th>${t.colEur}</th>
+                <th>${t.colResult}</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+
+        <p class="small"><strong>${t.resFees}:</strong> ${fmt.c2.format(rec.fees)}</p>
+
+        ${ended ? `
+          <p class="small">${won ? t.endedWin : t.endedLose}</p>
+          <button class="primary" id="btnAgain">${t.resAgain}</button>
+        ` : `
+          <button class="primary" id="btnCont">${t.resContinue}</button>
+        `}
+      `;
+
+      openModal('modalResult');
+
+      const cont = document.getElementById('btnCont');
+      if(cont){
+        cont.addEventListener('click', ()=>{
+          beep('click');
+          closeModal('modalResult');
+          // advance only now (so news matches results until you continue)
+          if(pendingAdvance){
+            state.month += 1;
+            state.eventId = pendingAdvance.nextEventId;
+            pendingAdvance = null;
+            renderAll();
+          }
+        }, { once:true });
+      }
+
+      const again = document.getElementById('btnAgain');
+      if(again){
+        again.addEventListener('click', ()=>{
+          beep('click');
+          closeModal('modalResult');
+          newRun();
+        }, { once:true });
+      }
+
+      if(ended && won) beep('win');
+      else beep('next');
+    }
+
     function endMonth(){
+      beep('next');
+
       const totalBefore = worth();
       const t = readTargets();
       const sumT = Object.values(t).reduce((s,v)=>s+v,0);
@@ -1241,7 +1348,7 @@
       const cashAfterFees = totalBefore - sumT - fees;
       if(cashAfterFees < -0.01) return;
 
-      // Rebalance to targets
+      // Rebalance now
       state.h = { ...t };
       state.cash = Math.max(0, cashAfterFees);
 
@@ -1249,13 +1356,13 @@
       const returns = {};
 
       // Apply returns
-      ASSETS.forEach(a => {
+      ASSETS.forEach(a=>{
         const r = simulateReturn(a.id, state.eventId);
         returns[a.id] = r;
         state.h[a.id] *= (1 + r);
       });
 
-      // Cash interest/inflation (simplified)
+      // Cash (simple interest - inflation)
       const ev = EVENTS[state.eventId];
       const cashRate = settings.baseCashInterest + (ev.cash?.rateAdd ?? 0);
       const infl = settings.inflEnabled ? (settings.baseInflation + (ev.cash?.inflAdd ?? 0)) : 0;
@@ -1263,12 +1370,13 @@
       state.cash *= (1 + netCash);
 
       const totalAfter = worth();
+
+      // pick next event, but don't apply it yet
       const nextEventId = chooseWeighted(ev.followUps);
 
       const rec = {
         month: state.month,
         eventId: state.eventId,
-        nextEventId,
         totalBefore,
         totalAfter,
         fees,
@@ -1280,142 +1388,35 @@
       const won = totalAfter >= settings.goal;
       const ended = won || state.month >= settings.months || totalAfter <= 0;
 
+      if(!ended){
+        pendingAdvance = { nextEventId };
+      }else{
+        pendingAdvance = null;
+      }
+
+      // keep the same news visible until player presses Continue
       showResult(rec, ended, won);
 
-      if(!ended){
-        state.month += 1;
-        state.eventId = nextEventId;
-      }
-      render();
+      // update stats/history behind modal
+      renderStats();
+      renderHistory();
+      updateSummary();
     }
 
-    function renderHistory(){
-      const T = L();
-      const ol = el('history');
-      ol.innerHTML = '';
-      if(state.history.length===0){
-        const li = document.createElement('li');
-        li.textContent = settings.lang === 'lv' ? 'Vēl nav nospēlēts neviens mēnesis.' : 'No months played yet.';
-        ol.appendChild(li);
-        return;
-      }
-      [...state.history].reverse().forEach(h => {
-        const li = document.createElement('li');
-        const d = h.totalAfter - h.totalBefore;
-        const cls = d>=0?'good':'bad';
-        const tt = evText(h.eventId);
-        li.innerHTML = `${T.histPrefix} ${h.month}: <strong>${tt.title}</strong> → ${fmt.c0.format(h.totalAfter)} <span class="${cls}">(${d>=0?'+':''}${fmt.c0.format(d)})</span>`;
-        ol.appendChild(li);
-      });
+    function newRun(){
+      const startEvent = START_EVENTS[Math.floor(Math.random()*START_EVENTS.length)];
+      state = {
+        month: 1,
+        eventId: startEvent,
+        cash: settings.start,
+        h: { stocks:0, bonds:0, realEstate:0, crypto:0 },
+        history: []
+      };
+      pendingAdvance = null;
+      renderAll();
     }
 
-    function showAssetInfo(a){
-      const title = `${a.icon} ${a.name[settings.lang] || a.name.en}`;
-      el('assetTitle').textContent = title;
-
-      const body = el('assetBodyText');
-      const info = a.info[settings.lang] || a.info.en;
-
-      body.innerHTML = `
-        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
-          <div class="kpi"><div class="label">${settings.lang==='lv'?'Risks':'Risk'}</div><div class="value">${riskLabel(a)}</div></div>
-          <div class="kpi"><div class="label">${settings.lang==='lv'?'Svārstība (spēlē)':'Volatility (game)'}</div><div class="value">≈ ${(a.baseSigma*100).toFixed(1)}%</div></div>
-        </div>
-        <p class="small"><strong>${settings.lang==='lv'?'Kas tas ir':'What it is'}:</strong> ${info.what}</p>
-        <p class="small"><strong>${settings.lang==='lv'?'Kāpēc ir risks':'Why it’s risky'}:</strong> ${info.risk}</p>
-        <p class="small"><strong>${settings.lang==='lv'?'Spēles modelis':'How it works here'}:</strong> ${info.model}</p>
-      `;
-      openModal('modalAsset');
-    }
-
-    function showResult(rec, ended, won){
-      const T = L();
-      const evT = evText(rec.eventId);
-      const nextT = evText(rec.nextEventId);
-
-      const delta = rec.totalAfter - rec.totalBefore;
-      const cls = delta>=0 ? 'good' : 'bad';
-      const sign = delta>=0 ? '+' : '';
-
-      // Find best/worst return
-      let best = null, worst = null;
-      ASSETS.forEach(a => {
-        const r = rec.returns[a.id];
-        if(best===null || r > best.r) best = { id:a.id, name:a.name[settings.lang]||a.name.en, icon:a.icon, r };
-        if(worst===null || r < worst.r) worst = { id:a.id, name:a.name[settings.lang]||a.name.en, icon:a.icon, r };
-      });
-
-      const rows = ASSETS.map(a => {
-        const r = rec.returns[a.id];
-        const start = rec.allocations[a.id];
-        const end = start * (1 + r);
-        const rCls = r>=0 ? 'good' : 'bad';
-        return `<tr>
-          <td>${a.icon} ${a.name[settings.lang] || a.name.en}</td>
-          <td>${fmt.c0.format(start)}</td>
-          <td class="${rCls}">${fmt.pct.format(r)}</td>
-          <td>${fmt.c0.format(end)}</td>
-        </tr>`;
-      }).join('');
-
-      const whyList = (evT.why || []).map(s => `<li>${s}</li>`).join('');
-
-      const body = el('resBody');
-      body.innerHTML = `
-        <div class="kpis">
-          <div class="kpi"><div class="label">${T.resMonth}</div><div class="value">${rec.month}</div></div>
-          <div class="kpi"><div class="label">${T.resNet}</div><div class="value">${fmt.c0.format(rec.totalAfter)}</div></div>
-          <div class="kpi"><div class="label">${T.resChange}</div><div class="value ${cls}">${sign}${fmt.c0.format(delta)}</div></div>
-        </div>
-
-        <h3>${T.resWhat}</h3>
-        <p class="small"><strong>${evT.title}</strong> — ${evT.desc}</p>
-
-        <h3>${T.resWhy}</h3>
-        <ul class="small">${whyList}</ul>
-
-        <h3>${T.resWinners}</h3>
-        <p class="small">
-          <strong>${T.resBest}:</strong> ${best.icon} ${best.name} <span class="good">(${fmt.pct.format(best.r)})</span><br/>
-          <strong>${T.resWorst}:</strong> ${worst.icon} ${worst.name} <span class="bad">(${fmt.pct.format(worst.r)})</span>
-        </p>
-
-        <h3>${T.resTable}</h3>
-        <div style="overflow:auto">
-          <table>
-            <thead><tr><th>${T.resAsset}</th><th>${T.resStart}</th><th>${T.resRet}</th><th>${T.resEnd}</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-
-        <p class="small"><strong>${T.resFees}:</strong> ${fmt.c2.format(rec.fees)}</p>
-
-        ${ended ? `
-          <h3>${settings.lang==='lv'?'Spēle beigusies':'Run ended'}</h3>
-          <p class="small">${won ? T.resEndedWin : T.resEndedLose}</p>
-          <p class="small"><strong>${settings.lang==='lv'?'Beigu rezultāts':'Final'}:</strong> ${fmt.c0.format(rec.totalAfter)} (${settings.lang==='lv'?'Mērķis':'Goal'} ${fmt.c0.format(settings.goal)})</p>
-          <button class="primary" id="btnPlayAgain">${T.resAgain}</button>
-        ` : `
-          <h3>${T.resNext}</h3>
-          <p class="small"><strong>${nextT.title}</strong> — ${nextT.desc}</p>
-          <button class="primary" id="btnContinue">${T.resContinue}</button>
-        `}
-      `;
-
-      el('resTitle').textContent = T.resultTitle(ended);
-      openModal('modalResult');
-
-      const cont = document.getElementById('btnContinue');
-      if(cont){
-        cont.addEventListener('click', () => closeModal('modalResult'), { once:true });
-      }
-      const again = document.getElementById('btnPlayAgain');
-      if(again){
-        again.addEventListener('click', () => { closeModal('modalResult'); newRun(); }, { once:true });
-      }
-    }
-
-    function render(){
+    function renderAll(){
       applyI18n();
       buildAssetRows();
       renderNews();
@@ -1425,62 +1426,77 @@
       renderHistory();
     }
 
-    // UI wiring
-    el('btnEnd').addEventListener('click', endMonth);
-    el('btnRestart').addEventListener('click', newRun);
-
-    el('btnHow').addEventListener('click', ()=>openModal('modalHow'));
-    el('howClose').addEventListener('click', ()=>closeModal('modalHow'));
-
-    el('btnSettings').addEventListener('click', () => {
-      el('setStart').value = String(settings.start);
-      el('setGoal').value = String(settings.goal);
-      el('setMonths').value = String(settings.months);
-      el('setFees').checked = settings.feesEnabled;
-      el('setInfl').checked = settings.inflEnabled;
-      el('setDiff').value = settings.difficulty;
-      el('setLang').value = settings.lang || 'lv';
-      openModal('modalSettings');
-    });
-
-    el('setClose').addEventListener('click', ()=>closeModal('modalSettings'));
-    el('assetClose').addEventListener('click', ()=>closeModal('modalAsset'));
-    el('resClose').addEventListener('click', ()=>closeModal('modalResult'));
-
-    el('setApply').addEventListener('click', () => {
-      const start = clamp(num(el('setStart').value), 1, 1e12);
-      const goal = clamp(num(el('setGoal').value), 1, 1e12);
-      const months = clamp(Math.floor(num(el('setMonths').value)), 1, 120);
-
-      settings = {
-        ...settings,
-        lang: el('setLang').value || 'lv',
-        start,
-        goal: Math.max(goal, start),
-        months,
-        feesEnabled: el('setFees').checked,
-        inflEnabled: el('setInfl').checked,
-        difficulty: el('setDiff').value || 'normal'
-      };
-
-      saveSettings(settings);
-      closeModal('modalSettings');
+    // --- UI wiring
+    function init(){
+      // Apply language + formatters first (safe)
+      applyI18n();
+      // Start the run (creates state BEFORE rendering values)
       newRun();
-    });
 
-    // Close modals on outside click + ESC
-    document.querySelectorAll('.overlay').forEach(ov => {
-      ov.addEventListener('mousedown', (e)=>{ if(e.target===ov) ov.hidden=true; });
-    });
-    document.addEventListener('keydown', (e)=>{
-      if(e.key!=='Escape') return;
-      const open = [...document.querySelectorAll('.overlay')].filter(x=>!x.hidden);
-      if(open.length) open[open.length-1].hidden = true;
-    });
+      el('btnEnd').addEventListener('click', endMonth);
 
-    // Start
-    render();
-    newRun();
+      el('btnRestart').addEventListener('click', ()=>{ beep('click'); newRun(); });
+
+      el('btnHow').addEventListener('click', ()=>{
+        beep('click');
+        fillHowModal();
+        openModal('modalHow');
+      });
+      el('howClose').addEventListener('click', ()=>{ beep('click'); closeModal('modalHow'); });
+
+      el('btnSettings').addEventListener('click', ()=>{
+        beep('click');
+        // fill current settings
+        el('setStart').value = String(settings.start);
+        el('setGoal').value = String(settings.goal);
+        el('setMonths').value = String(settings.months);
+        el('setFees').checked = settings.feesEnabled;
+        el('setInfl').checked = settings.inflEnabled;
+        el('setSound').checked = settings.soundEnabled;
+        el('setDiff').value = settings.difficulty;
+        el('setLang').value = settings.lang;
+        openModal('modalSettings');
+      });
+      el('setClose').addEventListener('click', ()=>{ beep('click'); closeModal('modalSettings'); });
+
+      el('assetClose').addEventListener('click', ()=>{ beep('click'); closeModal('modalAsset'); });
+      el('resClose').addEventListener('click', ()=>{ beep('click'); closeModal('modalResult'); });
+
+      el('setApply').addEventListener('click', ()=>{
+        beep('click');
+        const start = clamp(num(el('setStart').value), 1, 1e12);
+        const goal = clamp(num(el('setGoal').value), 1, 1e12);
+        const months = clamp(Math.floor(num(el('setMonths').value)), 1, 120);
+
+        settings = {
+          ...settings,
+          lang: el('setLang').value || 'lv',
+          start,
+          goal: Math.max(goal, start),
+          months,
+          feesEnabled: el('setFees').checked,
+          inflEnabled: el('setInfl').checked,
+          soundEnabled: el('setSound').checked,
+          difficulty: el('setDiff').value || 'normal'
+        };
+        saveSettings(settings);
+        closeModal('modalSettings');
+        // restart with new settings
+        newRun();
+      });
+
+      // Close modals on outside click + ESC
+      document.querySelectorAll('.overlay').forEach(ov=>{
+        ov.addEventListener('mousedown', (e)=>{ if(e.target===ov) ov.hidden=true; });
+      });
+      document.addEventListener('keydown', (e)=>{
+        if(e.key!=='Escape') return;
+        const open = [...document.querySelectorAll('.overlay')].filter(x=>!x.hidden);
+        if(open.length) open[open.length-1].hidden = true;
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
   })();
   </script>
 </body>
