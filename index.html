@@ -601,27 +601,69 @@
     ];
 
     // (Events unchanged — keeping your current fundamentals)
-    const EVENTS = window.EVENTS_V3 || null;
+    const EVS = (window.EVENTS_V3 && Object.keys(window.EVENTS_V3).length > 1)
+  ? window.EVENTS_V3
+  : {
+    calm: {
+      icon:'🟢',
+      text:{
+        en:{ title:'Quiet month', desc:'Markets move calmly.', facts:['Lower volatility.']},
+        lv:{ title:'Mierīgs mēnesis', desc:'Tirgus kustas mierīgāk.', facts:['Mazākas svārstības.']}
+      },
+      cash:{ rateAdd:0, inflAdd:0 },
+      impacts:{
+        stocks:{muAdd:0,sigMul:0.95},
+        bonds:{muAdd:0,sigMul:0.95},
+        realEstate:{muAdd:0,sigMul:0.95},
+        crypto:{muAdd:0,sigMul:0.95}
+      },
+      followUps:[
+        {id:'boom', w:1},
+        {id:'crash', w:1},
+        {id:'calm', w:2}
+      ]
+    },
 
-    // If you pasted a prior file that already contains EVENTS, keep it.
-    // If not, this fallback keeps the game running with a tiny event-set.
-    const EVENTS_FALLBACK = {
-      calm: {
-        icon:'🟢',
-        text:{
-          en:{ title:'Quiet month', desc:'No big shocks. Markets move calmer.', facts:['Swings can be smaller.','Risk still exists.']},
-          lv:{ title:'Mierīgs mēnesis', desc:'Nav lielu satricinājumu. Cenas kustas mierīgāk.', facts:['Svārstība bieži ir mazāka.','Risks nepazūd.']}
-        },
-        cash:{ rateAdd:0.000, inflAdd:0.000 },
-        impacts:{
-          stocks:{muAdd:0.000,sigMul:0.95}, bonds:{muAdd:0.000,sigMul:0.95},
-          realEstate:{muAdd:0.000,sigMul:0.95}, crypto:{muAdd:0.000,sigMul:0.95}
-        },
-        followUps:[ {id:'calm',w:1,teaser:{en:'Calm again',lv:'Atkal mierīgi'}} ]
-      }
-    };
-    const EVS = EVENTS || EVENTS_FALLBACK;
-    const START_EVENTS = Object.keys(EVS);
+    boom: {
+      icon:'🚀',
+      text:{
+        en:{ title:'Market boom', desc:'Markets rise.', facts:['Optimism increases.']},
+        lv:{ title:'Tirgus kāpj', desc:'Cenas aug.', facts:['Optimisms pieaug.']}
+      },
+      cash:{ rateAdd:0, inflAdd:0 },
+      impacts:{
+        stocks:{muAdd:0.02,sigMul:1.2},
+        bonds:{muAdd:0.001,sigMul:1},
+        realEstate:{muAdd:0.01,sigMul:1},
+        crypto:{muAdd:0.05,sigMul:1.5}
+      },
+      followUps:[
+        {id:'calm', w:2},
+        {id:'crash', w:1}
+      ]
+    },
+
+    crash: {
+      icon:'💥',
+      text:{
+        en:{ title:'Market crash', desc:'Markets fall.', facts:['Fear increases.']},
+        lv:{ title:'Tirgus krīt', desc:'Cenas krīt.', facts:['Bailes pieaug.']}
+      },
+      cash:{ rateAdd:0, inflAdd:0 },
+      impacts:{
+        stocks:{muAdd:-0.03,sigMul:1.3},
+        bonds:{muAdd:0.002,sigMul:0.9},
+        realEstate:{muAdd:-0.02,sigMul:1.2},
+        crypto:{muAdd:-0.08,sigMul:1.6}
+      },
+      followUps:[
+        {id:'calm', w:2},
+        {id:'boom', w:1}
+      ]
+    }
+  };
+
+const START_EVENTS = Object.keys(EVS);
 
     // helpers
     const el = (id)=>document.getElementById(id);
