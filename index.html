@@ -600,108 +600,248 @@
       }
     ];
 
-   // EVENTS SYSTEM (FIXED)
+   // EVENTS SYSTEM
 const EVS = {
   calm: {
     icon:'🟢',
     text:{
-      en:{ title:'Calm market', desc:'Markets are stable with small movements.', facts:['Low volatility','Stable prices']},
-      lv:{ title:'Mierīgs mēnesis', desc:'Tirgū nav būtisku izmaiņu, cenas kustas lēni.', facts:['Zema svārstība','Stabilas cenas']}
+      en:{
+        title:'Calm month',
+        desc:'There are no major shocks in the market. Prices move more slowly.',
+        facts:['Lower volatility','Prices stay relatively stable']
+      },
+      lv:{
+        title:'Mierīgs mēnesis',
+        desc:'Tirgū nav būtisku satricinājumu. Cenas kustas lēnāk.',
+        facts:['Mazākas svārstības','Cenas ir salīdzinoši stabilas']
+      }
     },
     cash:{ rateAdd:0, inflAdd:0 },
     impacts:{
-      stocks:{muAdd:0,sigMul:0.9},
-      bonds:{muAdd:0,sigMul:0.9},
-      realEstate:{muAdd:0,sigMul:0.9},
-      crypto:{muAdd:0,sigMul:0.9}
+      stocks:{muAdd:0, sigMul:0.9},
+      bonds:{muAdd:0, sigMul:0.9},
+      realEstate:{muAdd:0, sigMul:0.9},
+      crypto:{muAdd:0, sigMul:0.9}
     },
     followUps:[
-      {id:'boom', w:1, teaser:{lv:'Tirgus sāk augt 📈'}},
-      {id:'crash', w:1, teaser:{lv:'Iespējams kritums 📉'}},
-      {id:'oil', w:1, teaser:{lv:'Naftas cenas pieaug 🛢️'}}
+      {
+        id:'boom',
+        w:1,
+        teaser:{
+          en:'Company results may improve',
+          lv:'Uzņēmumu rezultāti var uzlaboties'
+        }
+      },
+      {
+        id:'oil',
+        w:1,
+        teaser:{
+          en:'Energy prices may rise',
+          lv:'Enerģijas cenas var pieaugt'
+        }
+      },
+      {
+        id:'inflation',
+        w:1,
+        teaser:{
+          en:'Inflation may accelerate',
+          lv:'Inflācija var paātrināties'
+        }
+      }
     ]
   },
 
   boom: {
     icon:'📈',
     text:{
-      en:{ title:'Market growth', desc:'Investors are optimistic and prices rise.', facts:['Stocks increase','Positive sentiment']},
-      lv:{ title:'Tirgus kāpj', desc:'Investori ir optimistiski un cenas pieaug.', facts:['Akcijas aug','Pozitīvs noskaņojums']}
+      en:{
+        title:'Stock market rises',
+        desc:'Investor optimism pushes prices upward across many assets.',
+        facts:['Stocks often benefit most','Risk appetite increases']
+      },
+      lv:{
+        title:'Akciju tirgus kāpj',
+        desc:'Investoru optimisms paaugstina cenas daudzos aktīvos.',
+        facts:['Akcijas bieži iegūst visvairāk','Pieaug vēlme riskēt']
+      }
     },
     cash:{ rateAdd:0, inflAdd:0 },
     impacts:{
-      stocks:{muAdd:0.04,sigMul:1.2},
-      bonds:{muAdd:0.01,sigMul:1},
-      realEstate:{muAdd:0.02,sigMul:1.1},
-      crypto:{muAdd:0.08,sigMul:1.4}
+      stocks:{muAdd:0.04, sigMul:1.2},
+      bonds:{muAdd:0.005, sigMul:1.0},
+      realEstate:{muAdd:0.015, sigMul:1.1},
+      crypto:{muAdd:0.07, sigMul:1.4}
     },
     followUps:[
-      {id:'crash', w:1, teaser:{lv:'Var sekot kritums'}},
-      {id:'calm', w:2, teaser:{lv:'Tirgus stabilizējas'}}
+      {
+        id:'calm',
+        w:2,
+        teaser:{
+          en:'The market may calm down',
+          lv:'Tirgus var nomierināties'
+        }
+      },
+      {
+        id:'crash',
+        w:1,
+        teaser:{
+          en:'A correction may follow',
+          lv:'Var sekot korekcija'
+        }
+      },
+      {
+        id:'oil',
+        w:1,
+        teaser:{
+          en:'Energy prices may become important',
+          lv:'Svarīgas var kļūt enerģijas cenas'
+        }
+      }
     ]
   },
 
   crash: {
     icon:'📉',
     text:{
-      en:{ title:'Market crash', desc:'Panic selling causes prices to fall.', facts:['High volatility','Fear in market']},
-      lv:{ title:'Tirgus kritums', desc:'Investori pārdod aktīvus un cenas krīt.', facts:['Augsta svārstība','Bailes tirgū']}
+      en:{
+        title:'Market falls',
+        desc:'Investors become fearful and many prices fall at once.',
+        facts:['Volatility increases','Safer assets may perform better']
+      },
+      lv:{
+        title:'Tirgus krīt',
+        desc:'Investori kļūst piesardzīgi, un daudzu aktīvu cenas krītas.',
+        facts:['Pieaug svārstīgums','Drošāki aktīvi var noturēties labāk']
+      }
     },
     cash:{ rateAdd:0, inflAdd:0 },
     impacts:{
-      stocks:{muAdd:-0.05,sigMul:1.4},
-      bonds:{muAdd:-0.01,sigMul:1.1},
-      realEstate:{muAdd:-0.03,sigMul:1.2},
-      crypto:{muAdd:-0.15,sigMul:1.7}
+      stocks:{muAdd:-0.05, sigMul:1.4},
+      bonds:{muAdd:0.005, sigMul:1.1},
+      realEstate:{muAdd:-0.03, sigMul:1.2},
+      crypto:{muAdd:-0.14, sigMul:1.7}
     },
     followUps:[
-      {id:'calm', w:2, teaser:{lv:'Tirgus atkopjas'}},
-      {id:'boom', w:1, teaser:{lv:'Jauns kāpums'}}
+      {
+        id:'calm',
+        w:2,
+        teaser:{
+          en:'The situation may stabilize',
+          lv:'Situācija var stabilizēties'
+        }
+      },
+      {
+        id:'boom',
+        w:1,
+        teaser:{
+          en:'Recovery may begin',
+          lv:'Var sākties atkopšanās'
+        }
+      },
+      {
+        id:'inflation',
+        w:1,
+        teaser:{
+          en:'Economic pressure may remain',
+          lv:'Ekonomiskais spiediens var saglabāties'
+        }
+      }
     ]
   },
 
   oil: {
     icon:'🛢️',
     text:{
-      en:{ title:'Oil prices rise', desc:'Energy supply issues increase oil prices.', facts:['Energy costs increase','Inflation pressure']},
-      lv:{ title:'Naftas cenas pieaug', desc:'Enerģijas piegādes problēmas paaugstina cenas.', facts:['Enerģija kļūst dārgāka','Ietekmē ekonomiku']}
+      en:{
+        title:'Oil prices rise',
+        desc:'Energy supply problems increase oil prices and affect the wider economy.',
+        facts:['Transport and production costs rise','Some sectors are hit harder']
+      },
+      lv:{
+        title:'Naftas cenas pieaug',
+        desc:'Enerģijas piegādes problēmas paaugstina naftas cenas un ietekmē ekonomiku.',
+        facts:['Pieaug transporta un ražošanas izmaksas','Dažas nozares cieš vairāk']
+      }
     },
-    cash:{ rateAdd:0, inflAdd:0 },
+    cash:{ rateAdd:0, inflAdd:0.001 },
     impacts:{
-      stocks:{muAdd:-0.02,sigMul:1.1},
-      bonds:{muAdd:0,sigMul:1},
-      realEstate:{muAdd:-0.01,sigMul:1},
-      crypto:{muAdd:0.02,sigMul:1.2}
+      stocks:{muAdd:-0.02, sigMul:1.1},
+      bonds:{muAdd:0, sigMul:1.0},
+      realEstate:{muAdd:-0.01, sigMul:1.0},
+      crypto:{muAdd:0.02, sigMul:1.2}
     },
     followUps:[
-      {id:'inflation', w:1, teaser:{lv:'Inflācija pieaug 📊'}},
-      {id:'calm', w:1, teaser:{lv:'Situācija stabilizējas'}}
+      {
+        id:'inflation',
+        w:2,
+        teaser:{
+          en:'Higher prices may spread',
+          lv:'Cenu kāpums var izplatīties'
+        }
+      },
+      {
+        id:'calm',
+        w:1,
+        teaser:{
+          en:'Energy markets may settle',
+          lv:'Enerģijas tirgus var nomierināties'
+        }
+      }
     ]
   },
 
   inflation: {
     icon:'📊',
     text:{
-      en:{ title:'Inflation rises', desc:'Prices increase across the economy.', facts:['Cash loses value','Interest rates may rise']},
-      lv:{ title:'Inflācija pieaug', desc:'Cenas visā ekonomikā palielinās.', facts:['Nauda zaudē vērtību','Var kāpt procenti']}
+      en:{
+        title:'Inflation rises',
+        desc:'Prices increase across the economy and cash loses value more quickly.',
+        facts:['Cash becomes weaker','Interest rates may rise']
+      },
+      lv:{
+        title:'Inflācija pieaug',
+        desc:'Cenas ekonomikā pieaug, un nauda zaudē vērtību ātrāk.',
+        facts:['Naudas vērtība samazinās','Var kāpt procentu likmes']
+      }
     },
     cash:{ rateAdd:-0.002, inflAdd:0.003 },
     impacts:{
-      stocks:{muAdd:-0.01,sigMul:1.1},
-      bonds:{muAdd:-0.02,sigMul:1.2},
-      realEstate:{muAdd:0.01,sigMul:1},
-      crypto:{muAdd:0.03,sigMul:1.3}
+      stocks:{muAdd:-0.01, sigMul:1.1},
+      bonds:{muAdd:-0.02, sigMul:1.2},
+      realEstate:{muAdd:0.01, sigMul:1.0},
+      crypto:{muAdd:0.03, sigMul:1.3}
     },
     followUps:[
-      {id:'calm', w:1, teaser:{lv:'Inflācija stabilizējas'}},
-      {id:'crash', w:1, teaser:{lv:'Ekonomikas kritums'}}
+      {
+        id:'calm',
+        w:1,
+        teaser:{
+          en:'Inflation may slow down',
+          lv:'Inflācija var mazināties'
+        }
+      },
+      {
+        id:'crash',
+        w:1,
+        teaser:{
+          en:'Economic weakness may grow',
+          lv:'Ekonomikas vājums var pastiprināties'
+        }
+      },
+      {
+        id:'boom',
+        w:1,
+        teaser:{
+          en:'Markets may adapt',
+          lv:'Tirgus var pielāgoties'
+        }
+      }
     ]
   }
 };
 
 const START_EVENTS = Object.keys(EVS);
 
-const START_EVENTS = Object.keys(EVS);
 
     // helpers
     const el = (id)=>document.getElementById(id);
