@@ -1057,8 +1057,14 @@ const START_EVENTS = Object.keys(EVS);
       (e.followUps || []).forEach(f => {
         const li = document.createElement('li');
         const nxt = EVS[f.id];
-        const teaser = (f.teaser && (f.teaser[settings.lang] || f.teaser.en)) || '';
-        li.textContent = `${nxt.icon} ${teaser}`;
+        let teaser = (f.teaser && (f.teaser[settings.lang] || f.teaser.en));
+
+if(!teaser){
+  const tNext = evText(f.id);
+  teaser = tNext.title;
+}
+
+li.textContent = `${nxt.icon} ${teaser}`;
         next.appendChild(li);
       });
     }
